@@ -8,6 +8,7 @@ import com.dukascopy.api.indicators.IIndicator;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Doubles;
 import ea.itrade.duk.dto.MacdDto;
+import ea.itrade.duk.util.DateUtil;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -56,7 +57,6 @@ public class MacdBeili implements IStrategy {
         }
     };
 
-
     @Override
     public void onStart(IContext context) throws JFException {
         this.context = context;
@@ -70,7 +70,6 @@ public class MacdBeili implements IStrategy {
             chart.add(indicators.getIndicator("MACD"), new Object[]{fastMACDPeriod, slowMACDPeriod, signalMACDPeriod});
         }
     }
-
 
     @Override
     public void onBar(Instrument instrument, Period period, IBar askBar, IBar bidBar) throws JFException {
@@ -230,7 +229,7 @@ public class MacdBeili implements IStrategy {
             } else if (ob instanceof double[]) {
                 print((double[][]) ob);
             } else if (ob instanceof Long) {
-                print(dateToStr((Long) ob));
+                print(DateUtil.dateToStr((Long) ob));
             } else {
                 print(ob);
             }
@@ -292,15 +291,5 @@ public class MacdBeili implements IStrategy {
 
     public String toDecimalToStr(double d) {
         return (new DecimalFormat("#.#######")).format(d);
-    }
-
-    public String dateToStr(Long time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss") {
-
-            {
-                setTimeZone(TimeZone.getTimeZone("GMT"));
-            }
-        };
-        return sdf.format(time);
     }
 }
