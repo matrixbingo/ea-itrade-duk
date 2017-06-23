@@ -1,6 +1,8 @@
 package ea.itrade.duk.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,11 +48,39 @@ public class DateUtil {
         return sdf;
     }
 
+    /**
+     *
+     * @param time
+     * @return
+     */
     public static String dateToStr(Long time) {
         return DateUtil.getSdf(TIME_FORMAT_DETAIL).format(time);
     }
 
-    public static void main(String[] args) {
+    public static String getFormatedDateString(float timeZoneOffset){
+        if (timeZoneOffset > 13 || timeZoneOffset < -12) {
+            timeZoneOffset = 0;
+        }
 
+        int newTime=(int)(timeZoneOffset * 60 * 60 * 1000);
+        TimeZone timeZone;
+        String[] ids = TimeZone.getAvailableIDs(newTime);
+        if (ids.length == 0) {
+            timeZone = TimeZone.getDefault();
+        } else {
+            timeZone = new SimpleTimeZone(newTime, ids[0]);
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(timeZone);
+        return sdf.format(new Date());
+    }
+
+    public static void main(String[] args) {
+        System.out.println(dateToStr(1496656422439L));
+        long time = System.currentTimeMillis();
+        System.out.println(time);
+        System.out.println(dateToStr(time));
+        System.out.println(getFormatedDateString(8));
     }
 }
