@@ -71,9 +71,14 @@ public class MacdBeili implements IStrategy {
         }
     }
 
+    private HashSet<String> set = new HashSet<>();
     @Override
     public void onBar(Instrument instrument, Period period, IBar askBar, IBar bidBar) throws JFException {
 
+        if(!set.contains(period.name())){
+            set.add(period.name());
+            console.getInfo().println(period.name());
+        }
         if (period != this.defaultPeriod || instrument != this.instrument) {
             return;
         }

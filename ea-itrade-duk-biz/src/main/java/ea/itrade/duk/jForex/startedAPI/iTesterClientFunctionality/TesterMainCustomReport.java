@@ -27,13 +27,13 @@
  * OF LIABILITY, ARISING OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE,
  * EVEN IF DUKASCOPY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
  */
-package ea.itrade.duk.iTesterClientFunctionality;
+package ea.itrade.duk.jForex.startedAPI.iTesterClientFunctionality;
 
 import com.dukascopy.api.*;
 import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
-import ea.itrade.duk.singlejartest.MA_Play;
+import ea.itrade.duk.jForex.MacdBeili;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +56,9 @@ public class TesterMainCustomReport {
 	// url of the DEMO jnlp
 	private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
 	// user name
-	private static String userName = "username";
+	private static String userName = "DEMO2ucBew";
 	// password
-	private static String password = "password";
+	private static String password = "ucBew";
 	
 	public static void insertStringInFile(File inFile, int lineno, String lineToBeInserted) throws Exception {
 		// temp file
@@ -142,7 +142,7 @@ public class TesterMainCustomReport {
 
 		// custom historical data
 		String dateFromStr = "05/25/2011 00:00:00";
-		String dateToStr = "05/26/2011 00:00:00";
+		String dateToStr = "05/27/2011 00:00:00";
 
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -152,6 +152,7 @@ public class TesterMainCustomReport {
 
 		client.setDataInterval(Period.THIRTY_MINS, OfferSide.BID, ITesterClient.InterpolationMethod.CLOSE_TICK, dateFrom.getTime(),
 				dateTo.getTime());
+
 
 		// set instruments that will be used in testing
 		Set<Instrument> instruments = new HashSet<Instrument>();
@@ -169,7 +170,7 @@ public class TesterMainCustomReport {
 		// start the strategy
 		LOGGER.info("Starting strategy");
 
-		client.startStrategy(new MA_Play(), new LoadingProgressListener() {
+		client.startStrategy(new MacdBeili(), new LoadingProgressListener() {
 
 			@Override
 			public void dataLoaded(long startTime, long endTime, long currentTime, String information) {

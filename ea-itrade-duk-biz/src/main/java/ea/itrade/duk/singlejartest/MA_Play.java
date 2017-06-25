@@ -30,6 +30,9 @@
 package ea.itrade.duk.singlejartest;
 
 import com.dukascopy.api.*;
+import com.dukascopy.api.system.tester.ITesterExecutionControl;
+import ea.itrade.duk.jForex.startedAPI.iTesterClientFunctionality.GUIModePlBalanceEquity;
+import ea.itrade.duk.util.DateUtil;
 
 public class MA_Play implements IStrategy {
     private IEngine engine = null;
@@ -37,6 +40,12 @@ public class MA_Play implements IStrategy {
     private int tagCounter = 0;
     private double[] ma1 = new double[Instrument.values().length];
     private IConsole console;
+    private GUIModePlBalanceEquity cUIModePlBalanceEquity;
+
+    public MA_Play(){}
+    public MA_Play(GUIModePlBalanceEquity cUIModePlBalanceEquity){
+        this.cUIModePlBalanceEquity = cUIModePlBalanceEquity;
+    }
 
     public void onStart(IContext context) throws JFException {
         engine = context.getEngine();
@@ -53,6 +62,7 @@ public class MA_Play implements IStrategy {
     }
 
     public void onTick(Instrument instrument, ITick tick) throws JFException {
+        console.getOut().println("tick.getTime() -----> " + DateUtil.dateToStr(tick.getTime()));
         if (ma1[instrument.ordinal()] == -1) {
             ma1[instrument.ordinal()] = indicators.ema(instrument, Period.TEN_SECS, OfferSide.BID, IIndicators.AppliedPrice.MEDIAN_PRICE, 14, 1);
         }
@@ -78,6 +88,12 @@ public class MA_Play implements IStrategy {
     }
 
     public void onBar(Instrument instrument, Period period, IBar askBar, IBar bidBar) {
+        console.getOut().println("tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        ITesterExecutionControl executionControl = this.cUIModePlBalanceEquity.getExecutionControl();
+        if(Period.FIVE_MINS == period && executionControl != null){
+            executionControl.pauseExecution();
+            this.cUIModePlBalanceEquity.updateButtons();
+        }
     }
 
     //count open positions
