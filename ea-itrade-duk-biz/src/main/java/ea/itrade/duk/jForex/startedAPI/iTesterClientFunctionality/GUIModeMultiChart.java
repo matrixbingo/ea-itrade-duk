@@ -39,7 +39,7 @@ import com.dukascopy.api.system.tester.ITesterExecution;
 import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import com.dukascopy.api.system.tester.ITesterGui;
 import com.dukascopy.api.system.tester.ITesterUserInterface;
-import ea.itrade.duk.singlejartest.MA_Play;
+import ea.itrade.duk.jForex.strategyAPI.indicators.indicator_catalog.CandlePatternsMultiple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,7 +191,7 @@ public class GUIModeMultiChart extends JFrame implements ITesterUserInterface, I
         LOGGER.info("Starting strategy");
 
         client.startStrategy(
-    		new MA_Play(),
+    		new CandlePatternsMultiple(),
     		new LoadingProgressListener() {
     			@Override
     			public void dataLoaded(long startTime, long endTime, long currentTime, String information) {

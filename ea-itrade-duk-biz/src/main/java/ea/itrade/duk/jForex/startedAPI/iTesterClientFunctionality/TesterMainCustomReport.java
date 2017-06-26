@@ -33,7 +33,7 @@ import com.dukascopy.api.*;
 import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
-import ea.itrade.duk.jForex.MacdBeili;
+import ea.itrade.duk.jForex.strategyAPI.indicators.indicator_catalog.CandlePatternsMultiple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,142 +51,145 @@ import java.util.concurrent.Future;
  */
 @RequiresFullAccess
 public class TesterMainCustomReport {
-	private static final Logger LOGGER = LoggerFactory.getLogger(TesterMainCustomReport.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TesterMainCustomReport.class);
 
-	// url of the DEMO jnlp
-	private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
-	// user name
-	private static String userName = "DEMO2ucBew";
-	// password
-	private static String password = "ucBew";
-	
-	public static void insertStringInFile(File inFile, int lineno, String lineToBeInserted) throws Exception {
-		// temp file
-		File outFile = new File("$$$$$$$$.tmp");
+    // url of the DEMO jnlp
+    private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
+    // user name
+    private static String userName = "DEMO2ucBew";
+    // password
+    private static String password = "ucBew";
 
-		// input
-		FileInputStream fis = new FileInputStream(inFile);
-		BufferedReader in = new BufferedReader(new InputStreamReader(fis));
+    public static void insertStringInFile(File inFile, int lineno, String lineToBeInserted) throws Exception {
+        // temp file
+        File outFile = new File("$$$$$$$$.tmp");
 
-		// output
-		FileOutputStream fos = new FileOutputStream(outFile);
-		PrintWriter out = new PrintWriter(fos);
+        // input
+        FileInputStream fis = new FileInputStream(inFile);
+        BufferedReader in = new BufferedReader(new InputStreamReader(fis));
 
-		String thisLine = "";
-		int i = 1;
-		while ((thisLine = in.readLine()) != null) {
-			if (i == lineno)
-				out.println(lineToBeInserted);
-			out.println(thisLine);
-			i++;
-		}
-		out.flush();
-		out.close();
-		in.close();
+        // output
+        FileOutputStream fos = new FileOutputStream(outFile);
+        PrintWriter out = new PrintWriter(fos);
 
-		inFile.delete();
-		outFile.renameTo(inFile);
-	}
+        String thisLine = "";
+        int i = 1;
+        while ((thisLine = in.readLine()) != null) {
+            if (i == lineno)
+                out.println(lineToBeInserted);
+            out.println(thisLine);
+            i++;
+        }
+        out.flush();
+        out.close();
+        in.close();
 
-	public static void main(String[] args) throws Exception {
-		// get the instance of the IClient interface
-		final ITesterClient client = TesterFactory.getDefaultInstance();
-		// set the listener that will receive system events
-		client.setSystemListener(new ISystemListener() {
-			@Override
-			public void onStart(long processId) {
-				LOGGER.info("Strategy started: " + processId);
-			}
+        inFile.delete();
+        outFile.renameTo(inFile);
+    }
 
-			@Override
-			public void onStop(long processId) {
-				LOGGER.info("Strategy stopped: " + processId);
-				File reportFile = new File("C:\\temp\\report2.html");
-				try {
-					client.createReport(processId, reportFile);
-					insertStringInFile(reportFile, 90, "<tr><th>__________INSERTED LINE__________</th><td>1.2345</td></tr>");
-				} catch (Exception e) {
-					LOGGER.error(e.getMessage(), e);
-				}
-				if (client.getStartedStrategies().size() == 0) {
-					System.exit(0);
-				}
-			}
+    public static void main(String[] args) throws Exception {
+        // get the instance of the IClient interface
+        final ITesterClient client = TesterFactory.getDefaultInstance();
+        // set the listener that will receive system events
+        client.setSystemListener(new ISystemListener() {
+            @Override
+            public void onStart(long processId) {
+                LOGGER.info("Strategy started: " + processId);
+            }
 
-			@Override
-			public void onConnect() {
-				LOGGER.info("Connected");
-			}
+            @Override
+            public void onStop(long processId) {
+                LOGGER.info("Strategy stopped: " + processId);
+                File reportFile = new File("C:\\temp\\report2.html");
+                try {
+                    client.createReport(processId, reportFile);
+                    insertStringInFile(reportFile, 90, "<tr><th>__________INSERTED LINE__________</th><td>1.2345</td></tr>");
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+                if (client.getStartedStrategies().size() == 0) {
+                    System.exit(0);
+                }
+            }
 
-			@Override
-			public void onDisconnect() {
-				// tester doesn't disconnect
-			}
-		});
+            @Override
+            public void onConnect() {
+                LOGGER.info("Connected");
+            }
 
-		LOGGER.info("Connecting...");
-		// connect to the server using jnlp, user name and password
-		// connection is needed for data downloading
-		client.connect(jnlpUrl, userName, password);
+            @Override
+            public void onDisconnect() {
+                // tester doesn't disconnect
+            }
+        });
 
-		// wait for it to connect
-		int i = 10; // wait max ten seconds
-		while (i > 0 && !client.isConnected()) {
-			Thread.sleep(1000);
-			i--;
-		}
-		if (!client.isConnected()) {
-			LOGGER.error("Failed to connect Dukascopy servers");
-			System.exit(1);
-		}
+        LOGGER.info("Connecting...");
+        // connect to the server using jnlp, user name and password
+        // connection is needed for data downloading
+        client.connect(jnlpUrl, userName, password);
 
-		// custom historical data
-		String dateFromStr = "05/25/2011 00:00:00";
-		String dateToStr = "05/27/2011 00:00:00";
+        // wait for it to connect
+        int i = 10; // wait max ten seconds
+        while (i > 0 && !client.isConnected()) {
+            Thread.sleep(1000);
+            i--;
+        }
+        if (!client.isConnected()) {
+            LOGGER.error("Failed to connect Dukascopy servers");
+            System.exit(1);
+        }
 
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        // custom historical data
+        String dateFromStr = "05/25/2011 00:00:00";
+        String dateToStr = "05/27/2011 00:00:00";
 
-		Date dateFrom = dateFormat.parse(dateFromStr);
-		Date dateTo = dateFormat.parse(dateToStr);
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-		client.setDataInterval(Period.THIRTY_MINS, OfferSide.BID, ITesterClient.InterpolationMethod.CLOSE_TICK, dateFrom.getTime(),
-				dateTo.getTime());
+        Date dateFrom = dateFormat.parse(dateFromStr);
+        Date dateTo = dateFormat.parse(dateToStr);
+
+        client.setDataInterval(Period.THIRTY_MINS, OfferSide.BID, ITesterClient.InterpolationMethod.CLOSE_TICK, dateFrom.getTime(),
+                dateTo.getTime());
 
 
-		// set instruments that will be used in testing
-		Set<Instrument> instruments = new HashSet<Instrument>();
-		instruments.add(Instrument.EURUSD);
-		LOGGER.info("Subscribing instruments...");
-		client.setSubscribedInstruments(instruments);
-		// setting initial deposit
-		//client.setInitialDeposit(Instrument.EURUSD.getSecondaryCurrency(), 50000);
-		client.setInitialDeposit(Instrument.EURUSD.getSecondaryJFCurrency(), 50000);
-		// load data
-		LOGGER.info("Downloading data");
-		Future<?> future = client.downloadData(null);
-		// wait for downloading to complete
-		future.get();
-		// start the strategy
-		LOGGER.info("Starting strategy");
+        // set instruments that will be used in testing
+        Set<Instrument> instruments = new HashSet<Instrument>();
+        instruments.add(Instrument.EURUSD);
+        LOGGER.info("Subscribing instruments...");
+        client.setSubscribedInstruments(instruments);
+        // setting initial deposit
+        //client.setInitialDeposit(Instrument.EURUSD.getSecondaryCurrency(), 50000);
+        client.setInitialDeposit(Instrument.EURUSD.getSecondaryJFCurrency(), 50000);
+        // load data
+        LOGGER.info("Downloading data");
+        Future<?> future = client.downloadData(null);
+        // wait for downloading to complete
+        future.get();
+        // start the strategy
+        LOGGER.info("Starting strategy");
 
-		client.startStrategy(new MacdBeili(), new LoadingProgressListener() {
+        client.startStrategy(
+                new CandlePatternsMultiple(),
+                //new MacdBeili(),
+                new LoadingProgressListener() {
 
-			@Override
-			public void dataLoaded(long startTime, long endTime, long currentTime, String information) {
-				LOGGER.info(information);
-			}
+                    @Override
+                    public void dataLoaded(long startTime, long endTime, long currentTime, String information) {
+                        LOGGER.info(information);
+                    }
 
-			@Override
-			public void loadingFinished(boolean allDataLoaded, long startTime, long endTime, long currentTime) {
-			}
+                    @Override
+                    public void loadingFinished(boolean allDataLoaded, long startTime, long endTime, long currentTime) {
+                    }
 
-			@Override
-			public boolean stopJob() {
-				return false;
-			}
-		});
-		// now it's running
+                    @Override
+                    public boolean stopJob() {
+                        return false;
+                    }
+                });
+        // now it's running
 
-	}
+    }
 }
