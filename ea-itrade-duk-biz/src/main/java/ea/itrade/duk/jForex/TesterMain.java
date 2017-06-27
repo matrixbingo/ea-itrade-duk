@@ -34,6 +34,7 @@ import com.dukascopy.api.LoadingProgressListener;
 import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
+import ea.itrade.duk.jForex.strategyAPI.indicators.indicator_catalog.CandlePatternsMultiple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +122,7 @@ public class TesterMain {
                 
         //start the strategy
         LOGGER.info("Starting strategy");
-        client.startStrategy(new CalculateIndicatorsFromChart(), new LoadingProgressListener() {
+        client.startStrategy(new CandlePatternsMultiple(), new LoadingProgressListener() {
             @Override
             public void dataLoaded(long startTime, long endTime, long currentTime, String information) {
                 LOGGER.info(information);
