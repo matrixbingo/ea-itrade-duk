@@ -20,8 +20,9 @@ public class ChartOperations implements IStrategy {
         this.console = context.getConsole();        
         
         IFeedDescriptor feedDescriptor = new TimePeriodAggregationFeedDescriptor(Instrument.EURUSD, Period.TEN_SECS, OfferSide.BID);
-        chart = context.openChart(feedDescriptor);
-        
+        //chart = context.openChart(feedDescriptor);
+        this.chart = context.getChart(Instrument.EURUSD);
+
         print("Chart's feed: " + chart.getFeedDescriptor()); //will print all feed's parameters
         print("Chart's instrument: " + chart.getFeedDescriptor().getInstrument()); //retrieve a specific feed parameter
         

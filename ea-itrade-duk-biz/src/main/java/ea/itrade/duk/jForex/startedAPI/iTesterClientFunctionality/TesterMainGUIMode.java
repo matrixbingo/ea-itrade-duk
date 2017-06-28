@@ -40,7 +40,7 @@ import com.dukascopy.api.system.tester.ITesterExecution;
 import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import com.dukascopy.api.system.tester.ITesterGui;
 import com.dukascopy.api.system.tester.ITesterUserInterface;
-import ea.itrade.duk.jForex.strategyAPI.chart_Operations.ChartOperations;
+import ea.itrade.duk.jForex.strategyAPI.practices.FullMarketDepth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,11 +68,12 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
     private JPanel currentChartPanel = null;
     private ITesterExecutionControl executionControl = null;
 
-    private JPanel controlPanel = null;
+    public static JPanel controlPanel = null;
     private JButton startStrategyButton = null;
     private JButton pauseButton = null;
     private JButton continueButton = null;
     private JButton cancelButton = null;
+    private final String controlPanelName = "TickCounter";
 
     //url of the DEMO jnlp
     private static String jnlpUrl = "http://platform.dukascopy.com/demo/jforex.jnlp";
@@ -232,6 +233,7 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
      */
     private void addControlPanel() {
         controlPanel = new JPanel();
+        controlPanel.setName(controlPanelName);
         FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
         controlPanel.setLayout(flowLayout);
         controlPanel.setPreferredSize(new Dimension(frameWidth, controlPanelHeight));
@@ -365,8 +367,13 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
         //IStrategy strategy = new DrawOnAllCharts(); //
 
         //IStrategy strategy = new MouseListenerStrat(); //
-        IStrategy strategy = new ChartOperations(); //
-
+        //IStrategy strategy = new ChartOperations(); //
+        //IStrategy strategy = new TickCountingTabSimple(); //添加按钮
+        //IStrategy strategy = new TickCountingComponent(); //新窗口
+        //IStrategy strategy = new Alerter(); //
+        //IStrategy strategy = new MarketIsOffline(); //离线时间
+        //IStrategy strategy = new MarketOfflineHours(); //
+        IStrategy strategy = new FullMarketDepth(); //
         TesterMainGUIMode testerMainGUI = new TesterMainGUIMode(strategy);
         testerMainGUI.showChartFrame();
     }

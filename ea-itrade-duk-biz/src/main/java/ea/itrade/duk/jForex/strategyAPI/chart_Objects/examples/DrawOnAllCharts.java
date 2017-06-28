@@ -34,7 +34,7 @@ public class DrawOnAllCharts implements IStrategy {
                 label.setyDistance(50);
                 label.setText("Label added on tick: " + tick, new Font(Font.SANS_SERIF, Font.BOLD, 12));
                 label.setColor(Color.RED.darker());
-                chart.addToMainChart(label);
+                chart.add(label);
             }
         }
 

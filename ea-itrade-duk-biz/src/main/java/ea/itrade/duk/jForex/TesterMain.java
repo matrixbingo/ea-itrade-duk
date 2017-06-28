@@ -29,12 +29,13 @@
  */
 package ea.itrade.duk.jForex;
 
+import com.dukascopy.api.IStrategy;
 import com.dukascopy.api.Instrument;
 import com.dukascopy.api.LoadingProgressListener;
 import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
-import ea.itrade.duk.jForex.strategyAPI.indicators.indicator_catalog.CandlePatternsMultiple;
+import ea.itrade.duk.jForex.strategyAPI.console.LoggingValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +57,7 @@ public class TesterMain {
     //password
     private static String password = "ucBew";
 
-    public static void main(String[] args) throws Exception {
+    public static void run(IStrategy strategy) throws Exception{
         //get the instance of the IClient interface
         final ITesterClient client = TesterFactory.getDefaultInstance();
         //set the listener that will receive system events
@@ -119,10 +120,10 @@ public class TesterMain {
         Future<?> future = client.downloadData(null);
         //wait for downloading to complete
         future.get();
-                
+
         //start the strategy
         LOGGER.info("Starting strategy");
-        client.startStrategy(new CandlePatternsMultiple(), new LoadingProgressListener() {
+        client.startStrategy(strategy, new LoadingProgressListener() {
             @Override
             public void dataLoaded(long startTime, long endTime, long currentTime, String information) {
                 LOGGER.info(information);
@@ -137,6 +138,13 @@ public class TesterMain {
                 return false;
             }
         });
+    }
+
+    public static void main(String[] args) throws Exception {
+        //IStrategy strategy =  new PrintPriceDifference();
+        IStrategy strategy =  new LoggingValues();
+
+        run(strategy);
         //now it's running
     }
 }
