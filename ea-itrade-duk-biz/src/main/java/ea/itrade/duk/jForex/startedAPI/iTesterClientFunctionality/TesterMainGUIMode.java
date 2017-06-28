@@ -40,7 +40,7 @@ import com.dukascopy.api.system.tester.ITesterExecution;
 import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import com.dukascopy.api.system.tester.ITesterGui;
 import com.dukascopy.api.system.tester.ITesterUserInterface;
-import ea.itrade.duk.jForex.strategyAPI.chart_Objects.examples.LevelLines;
+import ea.itrade.duk.jForex.strategyAPI.chart_Operations.ChartOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -361,8 +361,12 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
         //IStrategy strategy = new PolyLine(); //
         //IStrategy strategy = new RayLinePriceByShift(); //
         //IStrategy strategy = new RayLinePriceByShiftFilter(); //
-        IStrategy strategy = new LevelLines(); //
+        //IStrategy strategy = new LevelLines(); //
         //IStrategy strategy = new DrawOnAllCharts(); //
+
+        //IStrategy strategy = new MouseListenerStrat(); //
+        IStrategy strategy = new ChartOperations(); //
+
         TesterMainGUIMode testerMainGUI = new TesterMainGUIMode(strategy);
         testerMainGUI.showChartFrame();
     }
