@@ -35,7 +35,7 @@ import com.dukascopy.api.LoadingProgressListener;
 import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
-import ea.itrade.duk.jForex.strategyAPI.console.LoggingValues;
+import ea.itrade.duk.jForex.strategyAPI.strategy_Examples.SmaTrendStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +142,8 @@ public class TesterMain {
 
     public static void main(String[] args) throws Exception {
         //IStrategy strategy =  new PrintPriceDifference();
-        IStrategy strategy =  new LoggingValues();
+        //IStrategy strategy =  new LoggingValues();
+        IStrategy strategy =  new SmaTrendStrategy();
 
         run(strategy);
         //now it's running

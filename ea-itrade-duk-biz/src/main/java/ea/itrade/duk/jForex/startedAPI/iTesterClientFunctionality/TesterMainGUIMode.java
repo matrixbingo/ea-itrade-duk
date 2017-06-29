@@ -40,7 +40,7 @@ import com.dukascopy.api.system.tester.ITesterExecution;
 import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import com.dukascopy.api.system.tester.ITesterGui;
 import com.dukascopy.api.system.tester.ITesterUserInterface;
-import ea.itrade.duk.jForex.strategyAPI.practices.FullMarketDepth;
+import ea.itrade.duk.jForex.strategyAPI.strategy_Examples.MartingaleWtihMA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -373,7 +373,12 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
         //IStrategy strategy = new Alerter(); //
         //IStrategy strategy = new MarketIsOffline(); //离线时间
         //IStrategy strategy = new MarketOfflineHours(); //
-        IStrategy strategy = new FullMarketDepth(); //
+        //IStrategy strategy = new FullMarketDepth(); //
+
+        //IStrategy strategy = new SmaCrossStrategyVisual(); //sma交叉，画箭头
+        //IStrategy strategy = new SMAStrategy(); //sma交叉，画箭头
+        IStrategy strategy = new MartingaleWtihMA(); //
+
         TesterMainGUIMode testerMainGUI = new TesterMainGUIMode(strategy);
         testerMainGUI.showChartFrame();
     }
