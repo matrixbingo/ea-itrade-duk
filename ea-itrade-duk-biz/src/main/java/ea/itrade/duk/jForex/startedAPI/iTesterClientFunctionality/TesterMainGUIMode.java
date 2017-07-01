@@ -40,7 +40,8 @@ import com.dukascopy.api.system.tester.ITesterExecution;
 import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import com.dukascopy.api.system.tester.ITesterGui;
 import com.dukascopy.api.system.tester.ITesterUserInterface;
-import ea.itrade.duk.jForex.strategyAPI.strategy_Examples.MartingaleWtihMA;
+import ea.itrade.duk.base.JForexUser;
+import ea.itrade.duk.jForex.strategyAPI.chart_Objects.indicator_chart_panels.IndicatorPanelAddStochAndHLines;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,9 +79,9 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
     //url of the DEMO jnlp
     private static String jnlpUrl = "http://platform.dukascopy.com/demo/jforex.jnlp";
     //user name
-    private static String userName = "DEMO2ucBew";
+    private static String userName = JForexUser.DEMO_USERNAME;
     //password
-    private static String password = "ucBew";
+    private static String password = JForexUser.DEMO_PASSWORD;
 
     private Instrument instrument = Instrument.EURUSD;
 
@@ -355,7 +356,7 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
         //IStrategy strategy = new LongTrendLine();
         //IStrategy strategy = new LeveledObjects();
         //IStrategy strategy = new InteractiveRectangleDrawer();
-        //IStrategy strategy = new IndicatorPanelAddStochAndHLines();
+        IStrategy strategy = new IndicatorPanelAddStochAndHLines();
         //IStrategy strategy = new WidgetTest();
         //IStrategy strategy = new TestOHLC2(); //详情
         //IStrategy strategy = new IntersectionPointInd(); //均线死叉
@@ -377,7 +378,7 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
 
         //IStrategy strategy = new SmaCrossStrategyVisual(); //sma交叉，画箭头
         //IStrategy strategy = new SMAStrategy(); //sma交叉，画箭头
-        IStrategy strategy = new MartingaleWtihMA(); //
+        //IStrategy strategy = new MartingaleWtihMA(); //
 
         TesterMainGUIMode testerMainGUI = new TesterMainGUIMode(strategy);
         testerMainGUI.showChartFrame();

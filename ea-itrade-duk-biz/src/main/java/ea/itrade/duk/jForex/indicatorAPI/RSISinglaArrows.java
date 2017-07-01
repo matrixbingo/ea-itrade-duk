@@ -41,6 +41,7 @@ public class RSISinglaArrows implements IIndicator {
             };
         optInputParameterInfos = new OptInputParameterInfo[] { new OptInputParameterInfo("Rsi time period",
                 OptInputParameterInfo.Type.OTHER, new IntegerRangeDescription(rsiTimePeriod, 1, 200, 1)) };
+
         outputParameterInfos = new OutputParameterInfo[] {
                 new OutputParameterInfo("Maximums", DOUBLE, ARROW_SYMBOL_DOWN) {{ setColor(Color.RED); }},
                 new OutputParameterInfo("Minimums", DOUBLE, ARROW_SYMBOL_UP) {{ setColor(Color.GREEN); }} };

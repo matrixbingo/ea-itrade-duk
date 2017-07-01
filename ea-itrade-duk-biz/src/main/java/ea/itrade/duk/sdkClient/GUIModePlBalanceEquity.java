@@ -36,6 +36,7 @@ import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
 import com.dukascopy.api.system.tester.*;
+import ea.itrade.duk.base.JForexUser;
 import ea.itrade.duk.singlejartest.MA_Play;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,9 +75,10 @@ public class GUIModePlBalanceEquity extends JFrame implements ITesterUserInterfa
 	//url of the DEMO jnlp
     private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
     //user name
-    private static String userName = "username";
+    private static String userName = JForexUser.DEMO_USERNAME;
     //password
-    private static String password = "password";
+    private static String password = JForexUser.DEMO_PASSWORD;
+
     public GUIModePlBalanceEquity(){
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -237,7 +239,7 @@ public class GUIModePlBalanceEquity extends JFrame implements ITesterUserInterfa
 	
 	/**
 	 * Add chart panel to the frame
-	 * @param panel
+	 * @param `panel`
 	 */
 	private void addChartPanel(JPanel chartPanel){
 		removecurrentChartPanel();

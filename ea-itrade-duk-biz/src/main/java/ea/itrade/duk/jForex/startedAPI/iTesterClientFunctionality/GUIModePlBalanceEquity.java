@@ -36,7 +36,7 @@ import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
 import com.dukascopy.api.system.tester.*;
-import ea.itrade.duk.singlejartest.MA_Play;
+import ea.itrade.duk.singlejartest.MA_PlayPause;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,7 +204,7 @@ public class GUIModePlBalanceEquity extends JFrame implements ITesterUserInterfa
    
         // Start strategy
         client.startStrategy(
-            new MA_Play(this),
+            new MA_PlayPause(this),
             new LoadingProgressListener() {
                 @Override
                 public void dataLoaded(long startTime, long endTime, long currentTime, String information) {

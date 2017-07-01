@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 /**
  * The strategy creates a customized GUI component in JForex client 
  * which contains a tick counter that can be reset by pressing a button. 
- * User can choose either to show the element either in a new bottom tab
+ * JForexUser can choose either to show the element either in a new bottom tab
  * or a new window. The component gets closed on strategy stop.
  */
 public class TickCountingComponent implements IStrategy {
