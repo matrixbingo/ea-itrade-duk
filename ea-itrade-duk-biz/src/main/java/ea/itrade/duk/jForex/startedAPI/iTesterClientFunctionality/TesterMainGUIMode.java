@@ -41,7 +41,7 @@ import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import com.dukascopy.api.system.tester.ITesterGui;
 import com.dukascopy.api.system.tester.ITesterUserInterface;
 import ea.itrade.duk.base.JForexUser;
-import ea.itrade.duk.jForex.strategyAPI.chart_Objects.indicator_chart_panels.IndicatorPanelAddStochAndHLines;
+import ea.itrade.duk.ea.MacdAndArw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -356,7 +356,7 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
         //IStrategy strategy = new LongTrendLine();
         //IStrategy strategy = new LeveledObjects();
         //IStrategy strategy = new InteractiveRectangleDrawer();
-        IStrategy strategy = new IndicatorPanelAddStochAndHLines();
+        //IStrategy strategy = new IndicatorPanelAddStochAndHLines();
         //IStrategy strategy = new WidgetTest();
         //IStrategy strategy = new TestOHLC2(); //详情
         //IStrategy strategy = new IntersectionPointInd(); //均线死叉
@@ -379,6 +379,7 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
         //IStrategy strategy = new SmaCrossStrategyVisual(); //sma交叉，画箭头
         //IStrategy strategy = new SMAStrategy(); //sma交叉，画箭头
         //IStrategy strategy = new MartingaleWtihMA(); //
+        IStrategy strategy = new MacdAndArw();
 
         TesterMainGUIMode testerMainGUI = new TesterMainGUIMode(strategy);
         testerMainGUI.showChartFrame();
