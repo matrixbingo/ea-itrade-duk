@@ -29,26 +29,34 @@
  */
 package ea.itrade.duk.sdkClient;
 
-import com.dukascopy.api.system.ISystemListener;
-import com.dukascopy.api.system.IClient;
+import com.dukascopy.api.CalendarFilter;
+import com.dukascopy.api.INewsFilter;
+import com.dukascopy.api.Instrument;
+import com.dukascopy.api.NewsFilter;
 import com.dukascopy.api.system.ClientFactory;
-import com.dukascopy.api.*;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
-
-import org.slf4j.LoggerFactory;
+import com.dukascopy.api.system.IClient;
+import com.dukascopy.api.system.ISystemListener;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TimeZone;
 
 /**
  * This small program demonstrates how to initialize Dukascopy client and start a strategy
  */
-public class MainStopFromConsole {
-	
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainStopFromConsole.class);
+public class NewsFilterMain {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NewsFilterMain.class);
+
+    //url of the DEMO jnlp
     private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
-    private static String userName = "";
-    private static String password = "";
+    //user name
+    private static String userName = "username";
+    //password
+    private static String password = "password";
 
     public static void main(String[] args) throws Exception {
         //get the instance of the IClient interface
@@ -64,7 +72,7 @@ public class MainStopFromConsole {
 
 			@Override
 			public void onStop(long processId) {
-                LOGGER.info("Strategy stopped: " + processId);	
+                LOGGER.info("Strategy stopped: " + processId);
                 if (client.getStartedStrategies().size() == 0) {
                     System.exit(0);
                 }
@@ -80,7 +88,6 @@ public class MainStopFromConsole {
 			public void onDisconnect() {
                 LOGGER.warn("Disconnected");
                 if (lightReconnects > 0) {
-                	LOGGER.error("TRY TO RECONNECT, reconnects left: " + lightReconnects);
                     client.reconnect();
                     --lightReconnects;
                 } else {
@@ -105,7 +112,7 @@ public class MainStopFromConsole {
 
         //wait for it to connect
         int i = 10; //wait max ten seconds
-        while (i > 0 && !client.isConnected()) {
+        while (i > 0 && !client.isConnected()) {	
             Thread.sleep(1000);
             i--;
         }
@@ -119,51 +126,56 @@ public class MainStopFromConsole {
         instruments.add(Instrument.EURUSD);
         LOGGER.info("Subscribing instruments...");
         client.setSubscribedInstruments(instruments);
+        
+
+        
+        NewsFilter newsFilter = new NewsFilter();
+        newsFilter.setTimeFrame(NewsFilter.TimeFrame.TODAY);
+        
+        //filter indicies
+        newsFilter.getStockIndicies().add(INewsFilter.StockIndex.NYSE);
+        newsFilter.getStockIndicies().add(INewsFilter.StockIndex.DJI);
                 
+        //filter countries and regions
+        newsFilter.getCountries().add(INewsFilter.Country.US);
+        newsFilter.getCountries().add(INewsFilter.Country.FR);
+        
+        //filter market sectors
+        newsFilter.getMarketSectors().add(INewsFilter.MarketSector.FCL);
+        newsFilter.getMarketSectors().add(INewsFilter.MarketSector.ENE);
+        
+        //filter keywords
+        newsFilter.getKeywords().add("Profit");
+        newsFilter.getKeywords().add("Loss");
+        
+        client.addNewsFilter(newsFilter);
+                        
+        
+        
+        CalendarFilter calendarFilter = new CalendarFilter();
+        calendarFilter.setTimeFrame(NewsFilter.TimeFrame.SPECIFIC_DATE);
+        
+        // custom historical interval
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		Date dateFrom = dateFormat.parse("2011-03-11");
+        calendarFilter.setFrom(dateFrom);       
+
+        //filter countries and regions
+        newsFilter.getCountries().add(INewsFilter.Country.G7);
+        
+        //filter keywords
+        calendarFilter.getKeywords().add("Treasury");
+        calendarFilter.getKeywords().add("GDP");
+        calendarFilter.getKeywords().add("trade");
+        
+        
+        client.addNewsFilter(calendarFilter);
+        
         
         //start the strategy
         LOGGER.info("Starting strategy");
-        final long strategyId = client.startStrategy(new IStrategy(){
-            public Instrument instrument = Instrument.EURUSD;
-            private IConsole console;
+        client.startStrategy(new NewsStrategyNoTrades());
 
-            public void onStart(IContext context) throws JFException {        
-                console = context.getConsole();    
-            }
-            public void onBar(Instrument instrument, Period period, IBar askBar, IBar bidBar) throws JFException {
-                if ( instrument == this.instrument){
-                	console.getOut().println(" bar: " + period  + " " + askBar);
-                }
-            }
-            public void onTick(Instrument instrument, ITick tick) throws JFException {    }
-            public void onMessage(IMessage message) throws JFException {    }
-            public void onAccount(IAccount account) throws JFException {    }
-            public void onStop() throws JFException {    }
-        });
-        //now it's running
-        
-        //every second check if "stop" had been typed in the console - if so - then stop the strategy
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {            	
-            	Scanner s = new Scanner(System.in);            	
-            	while(true){
-            		while(s.hasNext()){
-	            		String str = s.next();
-		            	if(str.equalsIgnoreCase("stop")){
-		            		System.out.println("Strategy stop by console command.");
-		            		client.stopStrategy(strategyId);
-		            	}
-            		}
-	            	try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-            	}
-            }
-            });
-        thread.start();
-       
     }
 }

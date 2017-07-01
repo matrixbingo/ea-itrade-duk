@@ -54,8 +54,10 @@ public class MainRemote {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MainRemote.class);
 	private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
-	private static String userName = "mzd";
-	private static String password = "mzd";
+	//user name
+	private static String userName = "DEMO2ucBew";
+	// password
+	private static String password = "ucBew";
 
 	private static UUID myStrategyId;
 

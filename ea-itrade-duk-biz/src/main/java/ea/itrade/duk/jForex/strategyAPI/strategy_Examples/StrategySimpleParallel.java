@@ -13,12 +13,12 @@ public class StrategySimpleParallel implements IStrategy {
 	public void onStart(IContext context) throws JFException {
         strategy1 = new SimpleStrategy();
         strategy2 = new SimpleStrategy();
-        ((SimpleStrategy)strategy1).amount = 0.001;
+       /* ((SimpleStrategy)strategy1).amount = 0.001;
         ((SimpleStrategy)strategy1).stopLossPips = 40;
         ((SimpleStrategy)strategy1).takeProfitPips = 40;
         ((SimpleStrategy)strategy2).amount = 0.002;
         ((SimpleStrategy)strategy2).stopLossPips = 80;
-        ((SimpleStrategy)strategy2).takeProfitPips = 80;
+        ((SimpleStrategy)strategy2).takeProfitPips = 80;*/
         
         strategy1.onStart(context);
         strategy2.onStart(context);
