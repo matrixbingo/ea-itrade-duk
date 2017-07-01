@@ -34,6 +34,7 @@ import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import ea.itrade.duk.jForex.startedAPI.iTesterClientFunctionality.GUIModePlBalanceEquity;
 import ea.itrade.duk.util.DateUtil;
 
+
 public class MA_Play implements IStrategy {
     private IEngine engine = null;
     private IIndicators indicators = null;
