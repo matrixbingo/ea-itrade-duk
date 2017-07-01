@@ -3,7 +3,7 @@ package ea.itrade.duk.jForex.indicatorAPI;
 import com.dukascopy.api.IConsole;
 import com.dukascopy.api.indicators.*;
 
-public class IndicatorOnStop implements IIndicator {
+public class IndicatorOnStop implements IIndicator, IStopListener {
     private IndicatorInfo indicatorInfo;
     private InputParameterInfo[] inputParameterInfos;
     private OptInputParameterInfo[] optInputParameterInfos;
