@@ -36,7 +36,7 @@ import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
 import com.dukascopy.api.system.tester.*;
 import ea.itrade.duk.base.JForexUser;
-import ea.itrade.duk.singlejartest.MA_Play;
+import ea.itrade.duk.ea.MacdAndArw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +74,8 @@ public class GUIModeChartControls extends JFrame implements ITesterUserInterface
     private JPeriodComboBox jPeriodComboBox = null;
     
     private Map<IChart, ITesterGui> chartPanels = null;
+
+    private IStrategy strategy;
     
     //url of the DEMO jnlp
     private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
@@ -83,6 +85,12 @@ public class GUIModeChartControls extends JFrame implements ITesterUserInterface
     private static String password = JForexUser.DEMO_PASSWORD;
     
     public GUIModeChartControls(){
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+    }
+
+    public GUIModeChartControls(IStrategy strategy){
+        this.strategy = strategy;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
     }
@@ -208,7 +216,7 @@ public class GUIModeChartControls extends JFrame implements ITesterUserInterface
    
         // Start strategy
         client.startStrategy(
-            new MA_Play(),
+                strategy,
             new LoadingProgressListener() {
                 @Override
                 public void dataLoaded(long startTime, long endTime, long currentTime, String information) {
@@ -561,7 +569,8 @@ public class GUIModeChartControls extends JFrame implements ITesterUserInterface
     }
     
     public static void main(String[] args) throws Exception {
-        GUIModeChartControls testerMainGUI = new GUIModeChartControls();
+        IStrategy strategy = new MacdAndArw();
+        GUIModeChartControls testerMainGUI = new GUIModeChartControls(strategy);
         testerMainGUI.showChartFrame();
     }
 }
