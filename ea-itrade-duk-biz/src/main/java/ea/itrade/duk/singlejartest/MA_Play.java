@@ -30,7 +30,6 @@
 package ea.itrade.duk.singlejartest;
 
 import com.dukascopy.api.*;
-import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import ea.itrade.duk.jForex.startedAPI.iTesterClientFunctionality.GUIModePlBalanceEquity;
 import ea.itrade.duk.util.DateUtil;
 
@@ -90,11 +89,7 @@ public class MA_Play implements IStrategy {
 
     public void onBar(Instrument instrument, Period period, IBar askBar, IBar bidBar) {
         console.getOut().println("tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
-        ITesterExecutionControl executionControl = this.cUIModePlBalanceEquity.getExecutionControl();
-        if(Period.FIVE_MINS == period && executionControl != null){
-            executionControl.pauseExecution();
-            this.cUIModePlBalanceEquity.updateButtons();
-        }
+
     }
 
     //count open positions

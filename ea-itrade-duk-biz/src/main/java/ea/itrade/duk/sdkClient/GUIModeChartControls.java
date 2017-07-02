@@ -30,10 +30,12 @@
 package ea.itrade.duk.sdkClient;
 
 import com.dukascopy.api.*;
+import com.dukascopy.api.feed.util.TimePeriodAggregationFeedDescriptor;
 import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
 import com.dukascopy.api.system.tester.*;
+import ea.itrade.duk.base.JForexUser;
 import ea.itrade.duk.singlejartest.MA_Play;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,9 +78,9 @@ public class GUIModeChartControls extends JFrame implements ITesterUserInterface
     //url of the DEMO jnlp
     private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
     //user name
-    private static String userName = "DEMO2QEsuu";
+    private static String userName = JForexUser.DEMO_USERNAME;
     //password
-    private static String password = "QEsuu";
+    private static String password = JForexUser.DEMO_PASSWORD;
     
     public GUIModeChartControls(){
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -600,9 +602,16 @@ class JPeriodComboBox extends JComboBox implements ItemListener {
                 ITesterChartController chartController = gui.getTesterChartController();
 
                 Period period = (Period)e.getItem();
-                DataType dataType = periods.get(period); 
+                //DataType dataType = periods.get(period);
                 
-                chartController.changePeriod(dataType, period);
+                //chartController.changePeriod(dataType, period);
+                chartController.setFeedDescriptor(new TimePeriodAggregationFeedDescriptor(
+                        Instrument.EURUSD,
+                        period,
+                        OfferSide.ASK,
+                        Filter.NO_FILTER
+                ));
+
                 mainFrame.setTitle(chart.getInstrument().toString() + " " + chart.getSelectedOfferSide() + " " + chart.getSelectedPeriod());
             }
         }
