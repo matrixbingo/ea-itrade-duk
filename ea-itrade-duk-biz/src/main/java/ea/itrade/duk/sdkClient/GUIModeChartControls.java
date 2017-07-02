@@ -30,13 +30,13 @@
 package ea.itrade.duk.sdkClient;
 
 import com.dukascopy.api.*;
-import com.dukascopy.api.feed.util.TimePeriodAggregationFeedDescriptor;
 import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
 import com.dukascopy.api.system.tester.*;
 import ea.itrade.duk.base.JForexUser;
 import ea.itrade.duk.ea.MacdAndArw;
+import ea.itrade.duk.sdkClient.component.base.JPeriodComboBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +44,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.*;
 import java.util.List;
@@ -572,57 +570,5 @@ public class GUIModeChartControls extends JFrame implements ITesterUserInterface
         IStrategy strategy = new MacdAndArw();
         GUIModeChartControls testerMainGUI = new GUIModeChartControls(strategy);
         testerMainGUI.showChartFrame();
-    }
-}
-
-@SuppressWarnings("serial")
-class JPeriodComboBox extends JComboBox implements ItemListener {
-    private JFrame mainFrame = null;
-    private Map<IChart, ITesterGui> chartPanels = null;
-    private Map<Period, DataType> periods = new LinkedHashMap<Period, DataType>();
-    
-    public void setChartPanels(Map<IChart, ITesterGui> chartPanels) {
-        this.chartPanels = chartPanels;
-        
-        IChart chart = chartPanels.keySet().iterator().next();
-        this.setSelectedItem(chart.getSelectedPeriod());
-    }
-
-    public JPeriodComboBox(JFrame mainFrame){
-        this.mainFrame = mainFrame;
-        this.addItemListener(this);
-        
-        periods.put(Period.THIRTY_SECS, DataType.TIME_PERIOD_AGGREGATION);
-        periods.put(Period.FIVE_MINS, DataType.TIME_PERIOD_AGGREGATION);
-        periods.put(Period.TEN_MINS, DataType.TIME_PERIOD_AGGREGATION);
-        periods.put(Period.THIRTY_MINS, DataType.TIME_PERIOD_AGGREGATION);
-        
-        for(Period period: periods.keySet()){
-            this.addItem(period);
-        }
-    }
-    
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-        if (e.getStateChange() == ItemEvent.SELECTED) {
-            if(chartPanels != null && chartPanels.size() > 0){
-                IChart chart = chartPanels.keySet().iterator().next();
-                ITesterGui gui = chartPanels.get(chart);
-                ITesterChartController chartController = gui.getTesterChartController();
-
-                Period period = (Period)e.getItem();
-                //DataType dataType = periods.get(period);
-                
-                //chartController.changePeriod(dataType, period);
-                chartController.setFeedDescriptor(new TimePeriodAggregationFeedDescriptor(
-                        Instrument.EURUSD,
-                        period,
-                        OfferSide.ASK,
-                        Filter.NO_FILTER
-                ));
-
-                mainFrame.setTitle(chart.getInstrument().toString() + " " + chart.getSelectedOfferSide() + " " + chart.getSelectedPeriod());
-            }
-        }
     }
 }
