@@ -1,7 +1,7 @@
 package ea.itrade.duk.dto;
 
 import com.dukascopy.api.*;
-import ea.itrade.duk.base.Common;
+import ea.itrade.duk.base.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class StrategyDto {
     private IChart chart;
 
     public StrategyDto(IContext context){
-        this.chart = context.getChart(Common.instrument);
+        this.chart = context.getChart(Constants.instrument);
         this.context = context;
         this.engine = context.getEngine();
         this.console = context.getConsole();

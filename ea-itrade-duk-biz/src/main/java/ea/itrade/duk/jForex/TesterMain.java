@@ -35,6 +35,7 @@ import com.dukascopy.api.LoadingProgressListener;
 import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
+import ea.itrade.duk.base.JForexUser;
 import ea.itrade.duk.jForex.strategyAPI.strategy_Examples.SmaTrendStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +54,9 @@ public class TesterMain {
     //url of the DEMO jnlp
     private static String jnlpUrl = "http://platform.dukascopy.com/demo/jforex.jnlp";
     //user name
-    private static String userName = "DEMO2ucBew";
+    private static String userName = JForexUser.DEMO_USERNAME;
     //password
-    private static String password = "ucBew";
+    private static String password = JForexUser.DEMO_PASSWORD;
 
     public static void run(IStrategy strategy) throws Exception{
         //get the instance of the IClient interface

@@ -18,10 +18,11 @@ import java.util.List;
  */
 @Slf4j
 public class ControlPanelUtil {
+
     /**
      * Add buttons to start/pause/continue/cancel actions  and other buttons
      */
-    public static void addControlPanel() {
+    public static void addControlPanel(JFrame mainFrame) {
 
         ChartControlComm.controlPanel = new JPanel();
         FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
@@ -38,7 +39,8 @@ public class ControlPanelUtil {
                 Runnable r = new Runnable() {
                     public void run() {
                         try {
-                            startStrategy();
+                            //todo startStrategy
+                            //startStrategy();
                         } catch (Exception e2) {
                             log.error(e2.getMessage(), e2);
                             e2.printStackTrace();
@@ -84,7 +86,7 @@ public class ControlPanelUtil {
             }
         });
 
-        ChartControlComm.jPeriodComboBox = new JPeriodComboBox(this);
+        ChartControlComm.jPeriodComboBox = new JPeriodComboBox(mainFrame);
 
         List<JButton> chartControlButtons = new ArrayList<JButton>();
 
@@ -260,8 +262,8 @@ public class ControlPanelUtil {
         for (JButton btn : chartControlButtons) {
             ChartControlComm.controlPanel.add(btn);
         }
-
-        getContentPane().add(ChartControlComm.controlPanel);
+        //todo
+        //getContentPane().add(ChartControlComm.controlPanel);
 
         ChartControlComm.pauseButton.setEnabled(false);
         ChartControlComm.continueButton.setEnabled(false);

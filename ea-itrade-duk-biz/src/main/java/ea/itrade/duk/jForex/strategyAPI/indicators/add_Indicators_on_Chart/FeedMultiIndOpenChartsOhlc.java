@@ -44,6 +44,7 @@ public class FeedMultiIndOpenChartsOhlc implements IStrategy {
             this.indicatorName = indicatorName;
             this.optionalInputs = optionalInputs;
             this.outputIndex = outputIndex;
+            this.chart = context.getChart(instrument);
         }
         
         public void openChartAddIndicator(){

@@ -33,6 +33,7 @@ import com.dukascopy.api.*;
 import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
+import ea.itrade.duk.base.JForexUser;
 import ea.itrade.duk.jForex.strategyAPI.indicators.indicator_catalog.CandlePatternsMultiple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +57,9 @@ public class TesterMainCustomReport {
     // url of the DEMO jnlp
     private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
     // user name
-    private static String userName = "DEMO2ucBew";
+    private static String userName = JForexUser.DEMO_USERNAME;
     // password
-    private static String password = "ucBew";
+    private static String password = JForexUser.DEMO_PASSWORD;
 
     public static void insertStringInFile(File inFile, int lineno, String lineToBeInserted) throws Exception {
         // temp file

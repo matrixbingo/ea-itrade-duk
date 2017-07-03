@@ -1,22 +1,7 @@
 package ea.itrade.duk.jForex.strategyAPI.indicators.add_Indicators_on_Chart;
 
-import com.dukascopy.api.Configurable;
-import com.dukascopy.api.Filter;
-import com.dukascopy.api.IAccount;
-import com.dukascopy.api.IBar;
-import com.dukascopy.api.IChart;
-import com.dukascopy.api.IChartObject;
-import com.dukascopy.api.IConsole;
-import com.dukascopy.api.IContext;
-import com.dukascopy.api.IIndicators;
+import com.dukascopy.api.*;
 import com.dukascopy.api.IIndicators.AppliedPrice;
-import com.dukascopy.api.IMessage;
-import com.dukascopy.api.IStrategy;
-import com.dukascopy.api.ITick;
-import com.dukascopy.api.Instrument;
-import com.dukascopy.api.JFException;
-import com.dukascopy.api.OfferSide;
-import com.dukascopy.api.Period;
 import com.dukascopy.api.drawings.IOhlcChartObject;
 import com.dukascopy.api.feed.util.TimePeriodAggregationFeedDescriptor;
 import com.dukascopy.api.util.DateUtils;
@@ -56,7 +41,7 @@ public class PlotEmaMacdWithOhlc implements IStrategy {
         this.console = context.getConsole();
         this.indicators = context.getIndicators();
         
-        IChart chart = null;
+        IChart chart = context.getChart(instrument);
         for(IChart c : context.getCharts(instrument)){
             if(c.getSelectedOfferSide() == this.side
                     && c.getSelectedPeriod() == this.period
@@ -72,7 +57,8 @@ public class PlotEmaMacdWithOhlc implements IStrategy {
         if(chart == null){
             chart = context.openChart(new TimePeriodAggregationFeedDescriptor(instrument, period, side, filter));
         }
-        
+
+
         chart.add(indicators.getIndicator("EMA"), new Object[] { emaTimePeriod });
         chart.add(indicators.getIndicator("MACD"), new Object[] { macdFastPeriod, macdSlowPeriod, macdSignalPeriod });
 

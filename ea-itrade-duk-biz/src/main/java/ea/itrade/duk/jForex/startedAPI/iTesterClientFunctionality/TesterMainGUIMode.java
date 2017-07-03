@@ -41,7 +41,7 @@ import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import com.dukascopy.api.system.tester.ITesterGui;
 import com.dukascopy.api.system.tester.ITesterUserInterface;
 import ea.itrade.duk.base.JForexUser;
-import ea.itrade.duk.ea.MacdAndArw;
+import ea.itrade.duk.jForex.strategyAPI.chart_Objects.examples.RayLinePriceByShift;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -346,23 +346,23 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
     }
 
     public static void main(String[] args) throws Exception {
-        //IStrategy strategy = new CandlePatternsMultiple();
+        //IStrategy strategy = new CandlePatternsMultiple();  //画箭头
         //IStrategy strategy = new CandlePatternsHammer();
         //IStrategy strategy = new HLineKeyRemove();
         //IStrategy strategy = new HLinesSelectFromStrat();
-        //IStrategy strategy = new RectangleMoveByTick();
+        //IStrategy strategy = new RectangleMoveByTick();     //移动框
         //IStrategy strategy = new SnappedToCandleTime(); //竖线
         //IStrategy strategy = new ChartObjectTemplate();   //横线
-        //IStrategy strategy = new LongTrendLine();
-        //IStrategy strategy = new LeveledObjects();
-        //IStrategy strategy = new InteractiveRectangleDrawer();
-        //IStrategy strategy = new IndicatorPanelAddStochAndHLines();
-        //IStrategy strategy = new WidgetTest();
+        //IStrategy strategy = new LongTrendLine();//斜线
+        //IStrategy strategy = new LeveledObjects();//各种线
+        //IStrategy strategy = new InteractiveRectangleDrawer();    //点线
+        //IStrategy strategy = new IndicatorPanelAddStochAndHLines(); //指标添加线
+        //IStrategy strategy = new WidgetTest();  //主图添加按钮
         //IStrategy strategy = new TestOHLC2(); //详情
-        //IStrategy strategy = new IntersectionPointInd(); //均线死叉
+        //IStrategy strategy = new IntersectionPointInd(); //SMA死叉
         //IStrategy strategy = new IntersectionPoint(); //
         //IStrategy strategy = new PolyLine(); //
-        //IStrategy strategy = new RayLinePriceByShift(); //
+        IStrategy strategy = new RayLinePriceByShift(); //
         //IStrategy strategy = new RayLinePriceByShiftFilter(); //
         //IStrategy strategy = new LevelLines(); //
         //IStrategy strategy = new DrawOnAllCharts(); //
@@ -378,8 +378,11 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
 
         //IStrategy strategy = new SmaCrossStrategyVisual(); //sma交叉，画箭头
         //IStrategy strategy = new SMAStrategy(); //sma交叉，画箭头
+        //IStrategy strategy = new FeedMultiIndOpenChartsOhlc();
+        //IStrategy strategy = new PlotEmaMacdWithOhlc();
         //IStrategy strategy = new MartingaleWtihMA(); //
-        IStrategy strategy = new MacdAndArw();
+        //IStrategy strategy = new MacdAndArw();
+
 
         TesterMainGUIMode testerMainGUI = new TesterMainGUIMode(strategy);
         testerMainGUI.showChartFrame();

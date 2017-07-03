@@ -1,58 +1,30 @@
 package ea.itrade.duk.sdkClient;
 
-import static com.dukascopy.api.DataType.*;
-import static com.dukascopy.api.Instrument.*;
-import static com.dukascopy.api.PriceRange.*;
-import static com.dukascopy.api.TickBarSize.*;
-import static com.dukascopy.api.Period.*;
-
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.dukascopy.api.DataType;
-import com.dukascopy.api.Filter;
-import com.dukascopy.api.IAccount;
-import com.dukascopy.api.IBar;
-import com.dukascopy.api.IChart;
-import com.dukascopy.api.IClientChartPresentationManager;
-import com.dukascopy.api.IClientGUI;
-import com.dukascopy.api.IClientGUIListener;
-import com.dukascopy.api.IContext;
-import com.dukascopy.api.IMessage;
-import com.dukascopy.api.IStrategy;
-import com.dukascopy.api.ITick;
-import com.dukascopy.api.Instrument;
-import com.dukascopy.api.JFException;
-import com.dukascopy.api.OfferSide;
-import com.dukascopy.api.Period;
-import com.dukascopy.api.PriceRange;
-import com.dukascopy.api.ReversalAmount;
-import com.dukascopy.api.TickBarSize;
-import com.dukascopy.api.DataType.DataPresentationType;
+import com.dukascopy.api.*;
+import com.dukascopy.api.DataType.*;
 import com.dukascopy.api.feed.IFeedDescriptor;
 import com.dukascopy.api.feed.util.TicksFeedDescriptor;
 import com.dukascopy.api.system.ClientFactory;
 import com.dukascopy.api.system.IClient;
 import com.dukascopy.api.system.ISystemListener;
+import ea.itrade.duk.base.JForexUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.*;
+
+import static com.dukascopy.api.DataType.*;
+import static com.dukascopy.api.Instrument.AUDCAD;
+import static com.dukascopy.api.Instrument.EURUSD;
+import static com.dukascopy.api.Period.*;
+import static com.dukascopy.api.PriceRange.*;
+import static com.dukascopy.api.TickBarSize.*;
 
 /**
  * Demonstrates the usage of Standalone Charts API (open charts / panels / control presentation view)<br/>
@@ -65,8 +37,8 @@ public class MainHandleStrategyOpenChart extends JFrame {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MainHandleStrategyOpenChart.class);
 
 	private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
-	private static String userName = "DEMO2ucBew";
-	private static String password = "ucBew";
+	private static String userName = JForexUser.DEMO_USERNAME;
+	private static String password = JForexUser.DEMO_PASSWORD;
 
 	private final int frameWidth = 1000;
 	private final int frameHeight = 600;

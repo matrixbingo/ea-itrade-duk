@@ -76,6 +76,24 @@ public class DateUtil {
         return sdf.format(new Date());
     }
 
+    /**
+     * String转换成Calendar
+     *
+     * @param time
+     * @return
+     */
+    final public static Date str2Date(String time, String format) {
+        Date date = null;
+        if (time != null) {
+            try {
+                date = DateUtil.getSdf(format).parse(time);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return date;
+    }
+
     public static void main(String[] args) {
         System.out.println(dateToStr(1496656422439L));
         long time = System.currentTimeMillis();

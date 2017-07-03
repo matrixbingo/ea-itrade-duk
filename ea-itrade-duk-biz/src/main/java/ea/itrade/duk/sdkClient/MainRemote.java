@@ -38,6 +38,7 @@ import com.dukascopy.api.strategy.remote.RemoteStrategyListener;
 import com.dukascopy.api.system.ClientFactory;
 import com.dukascopy.api.system.IClient;
 import com.dukascopy.api.system.ISystemListener;
+import ea.itrade.duk.base.JForexUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +56,9 @@ public class MainRemote {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MainRemote.class);
 	private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
 	//user name
-	private static String userName = "DEMO2ucBew";
+	private static String userName = JForexUser.DEMO_USERNAME;
 	// password
-	private static String password = "ucBew";
+	private static String password = JForexUser.DEMO_PASSWORD;
 
 	private static UUID myStrategyId;
 

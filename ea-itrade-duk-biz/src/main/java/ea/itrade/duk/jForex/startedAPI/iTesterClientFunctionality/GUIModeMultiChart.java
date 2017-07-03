@@ -39,6 +39,7 @@ import com.dukascopy.api.system.tester.ITesterExecution;
 import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import com.dukascopy.api.system.tester.ITesterGui;
 import com.dukascopy.api.system.tester.ITesterUserInterface;
+import ea.itrade.duk.base.JForexUser;
 import ea.itrade.duk.jForex.strategyAPI.indicators.indicator_catalog.CandlePatternsMultiple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,9 +77,9 @@ public class GUIModeMultiChart extends JFrame implements ITesterUserInterface, I
 	//url of the DEMO jnlp
     private static String jnlpUrl = "https://www.dukascopy.com/client/demo/jclient/jforex.jnlp";
 	//user name
-	private static String userName = "DEMO2ucBew";
+	private static String userName = JForexUser.DEMO_USERNAME;
 	// password
-	private static String password = "ucBew";
+	private static String password = JForexUser.DEMO_PASSWORD;
     public GUIModeMultiChart(){
     	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
