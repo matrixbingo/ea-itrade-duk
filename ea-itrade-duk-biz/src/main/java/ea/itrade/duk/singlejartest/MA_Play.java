@@ -30,24 +30,20 @@
 package ea.itrade.duk.singlejartest;
 
 import com.dukascopy.api.*;
-import ea.itrade.duk.jForex.startedAPI.iTesterClientFunctionality.GUIModePlBalanceEquity;
 import ea.itrade.duk.util.DateUtil;
-
 
 public class MA_Play implements IStrategy {
     private IEngine engine = null;
     private IIndicators indicators = null;
+    private IHistory history;
     private int tagCounter = 0;
     private double[] ma1 = new double[Instrument.values().length];
     private IConsole console;
-    private GUIModePlBalanceEquity cUIModePlBalanceEquity;
 
     public MA_Play(){}
-    public MA_Play(GUIModePlBalanceEquity cUIModePlBalanceEquity){
-        this.cUIModePlBalanceEquity = cUIModePlBalanceEquity;
-    }
 
     public void onStart(IContext context) throws JFException {
+        history = context.getHistory();
         engine = context.getEngine();
         indicators = context.getIndicators();
         this.console = context.getConsole();
@@ -62,34 +58,35 @@ public class MA_Play implements IStrategy {
     }
 
     public void onTick(Instrument instrument, ITick tick) throws JFException {
-        console.getOut().println("tick.getTime() -----> " + DateUtil.dateToStr(tick.getTime()));
-        if (ma1[instrument.ordinal()] == -1) {
-            ma1[instrument.ordinal()] = indicators.ema(instrument, Period.TEN_SECS, OfferSide.BID, IIndicators.AppliedPrice.MEDIAN_PRICE, 14, 1);
-        }
-        double ma0 = indicators.ema(instrument, Period.TEN_SECS, OfferSide.BID, IIndicators.AppliedPrice.MEDIAN_PRICE, 14, 0);
-        if (ma0 == 0 || ma1[instrument.ordinal()] == 0) {
-            ma1[instrument.ordinal()] = ma0;
-            return;
-        }
-
-        double diff = (ma1[instrument.ordinal()] - ma0) / (instrument.getPipValue());
-
-        if (positionsTotal(instrument) == 0) {
-            if (diff > 1) {
-                engine.submitOrder(getLabel(instrument), instrument, IEngine.OrderCommand.SELL, 0.001, 0, 0, tick.getAsk()
-                        + instrument.getPipValue() * 10, tick.getAsk() - instrument.getPipValue() * 15);
-            }
-            if (diff < -1) {
-                engine.submitOrder(getLabel(instrument), instrument, IEngine.OrderCommand.BUY, 0.001, 0, 0, tick.getBid()
-                        - instrument.getPipValue() * 10, tick.getBid() + instrument.getPipValue() * 15);
-            }
-        }
-        ma1[instrument.ordinal()] = ma0;
+        console.getOut().println("tick | " + DateUtil.dateToStr(tick.getTime()) + " | "+ history.getBar(instrument, Period.ONE_MIN, OfferSide.ASK,0));
     }
 
     public void onBar(Instrument instrument, Period period, IBar askBar, IBar bidBar) {
-        console.getOut().println("tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
-
+      if(period == Period.TEN_SECS){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.THIRTY_SECS){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.ONE_MIN){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.FIVE_MINS){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.TEN_MINS){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.FIFTEEN_MINS){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.THIRTY_MINS){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.ONE_HOUR){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.FOUR_HOURS){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.DAILY){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.WEEKLY){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }else if(period == Period.MONTHLY){
+            console.getOut().println(period + " | tick.getTime() -----> "  + DateUtil.dateToStr(askBar.getTime()));
+        }
     }
 
     //count open positions

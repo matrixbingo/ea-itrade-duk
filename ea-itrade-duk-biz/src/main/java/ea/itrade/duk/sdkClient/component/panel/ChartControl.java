@@ -7,7 +7,7 @@ import com.dukascopy.api.system.TesterFactory;
 import com.dukascopy.api.system.tester.*;
 import ea.itrade.duk.base.Constants;
 import ea.itrade.duk.base.JForexUser;
-import ea.itrade.duk.ea.MacdAndArw;
+import ea.itrade.duk.ea.MacdBeili;
 import ea.itrade.duk.sdkClient.component.base.ChartControlComm;
 import ea.itrade.duk.sdkClient.component.base.ControlPanelUtil;
 import ea.itrade.duk.util.DateUtil;
@@ -107,7 +107,9 @@ public class ChartControl extends MainJFrame implements ITesterUserInterface, IT
             System.exit(1);
         }
         // custom historical data
-        client.setDataInterval(Period.TEN_MINS, OfferSide.BID, ITesterClient.InterpolationMethod.CLOSE_TICK, DateUtil.str2Date(Constants.dateFrom, DateUtil.TIME_FORMAT_DETAIL).getTime(), DateUtil.str2Date(Constants.dateEnd, DateUtil.TIME_FORMAT_DETAIL).getTime());
+        client.setDefaultFilter(Filter.WEEKENDS);
+        client.setDataInterval(ITesterClient.DataLoadingMethod.ALL_TICKS, DateUtil.str2Date(Constants.dateFrom, DateUtil.TIME_FORMAT_DETAIL).getTime(), DateUtil.str2Date(Constants.dateEnd, DateUtil.TIME_FORMAT_DETAIL).getTime());
+        //client.setDataInterval(Constants.dataIntervalPeriod, OfferSide.ASK, ITesterClient.InterpolationMethod.CLOSE_TICK, DateUtil.str2Date(Constants.dateFrom, DateUtil.TIME_FORMAT_DETAIL).getTime(), DateUtil.str2Date(Constants.dateEnd, DateUtil.TIME_FORMAT_DETAIL).getTime());
 
         //set instruments that will be used in testing
         final Set<Instrument> instruments = new HashSet<Instrument>();
@@ -179,7 +181,8 @@ public class ChartControl extends MainJFrame implements ITesterUserInterface, IT
     }
 
     public static void main(String[] args) throws Exception {
-        IStrategy strategy = new MacdAndArw();
+        //IStrategy strategy = new MacdAndArw();
+        IStrategy strategy = new MacdBeili();
         ChartControl chartControl = new ChartControl(strategy);
         chartControl.showChartFrame();
 

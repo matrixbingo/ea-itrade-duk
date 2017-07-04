@@ -1,20 +1,19 @@
 package ea.itrade.duk.sdkClient.component.panel;
 
-import com.dukascopy.api.IChart;
 import com.dukascopy.api.IStrategy;
 import com.dukascopy.api.OfferSide;
-import com.dukascopy.api.system.tester.ITesterChartController;
-import com.dukascopy.api.system.tester.ITesterGui;
 import ea.itrade.duk.ea.MacdAndArw;
 import ea.itrade.duk.sdkClient.component.base.ChartControlComm;
 import ea.itrade.duk.sdkClient.component.base.ControlPanelUtil;
 import ea.itrade.duk.sdkClient.component.base.JPeriodComboBox;
+import ea.itrade.duk.sdkClient.component.frame.JFrameChart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,21 +68,12 @@ public class MainJFrame extends JFrame {
         chartPanel.repaint();
     }
     
-	private ITesterChartController getChartController() {
-		if (ChartControlComm.chartPanels == null || ChartControlComm.chartPanels.size() == 0) {
-			return null;
-		}
-		IChart chart = ChartControlComm.chartPanels.keySet().iterator().next();
-		ITesterGui gui = ChartControlComm.chartPanels.get(chart);
-		ITesterChartController chartController = gui.getTesterChartController();
-		return chartController;
-	}
+
 
     /**
      * Add buttons to start/pause/continue/cancel actions  and other buttons
      */
     private void addControlPanel(){
-        
         ChartControlComm.controlPanel = new JPanel();
         FlowLayout flowLayout = new FlowLayout(FlowLayout.LEFT);
         ChartControlComm.controlPanel.setLayout(flowLayout);
@@ -152,8 +142,8 @@ public class MainJFrame extends JFrame {
         chartControlButtons.add(new JButton("Add Indicators") {{
         	addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {                
-                	getChartController().addIndicators();
+                public void actionPerformed(ActionEvent e) {
+                    JFrameChart.getChartController().addIndicators();
                 }
             });
         }});
@@ -162,7 +152,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activatePriceMarker();
+                	JFrameChart.getChartController().activatePriceMarker();
                 }
             });
         }});
@@ -171,7 +161,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activateTimeMarker();
+                	JFrameChart.getChartController().activateTimeMarker();
                 }
             });
         }});
@@ -180,7 +170,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().setChartAutoShift();
+                	JFrameChart.getChartController().setChartAutoShift();
                 }
             });
         }});
@@ -189,7 +179,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activatePercentLines();
+                	JFrameChart.getChartController().activatePercentLines();
                 }
             });
         }});
@@ -198,7 +188,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activateChannelLines();
+                	JFrameChart.getChartController().activateChannelLines();
                 }
             });
         }});
@@ -207,7 +197,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activatePolyLine();
+                	JFrameChart.getChartController().activatePolyLine();
                 }
             });
         }});        
@@ -216,7 +206,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activateShortLine();
+                	JFrameChart.getChartController().activateShortLine();
                 }
             });
         }});
@@ -225,7 +215,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activateLongLine();
+                	JFrameChart.getChartController().activateLongLine();
                 }
             });
         }});
@@ -234,7 +224,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activateRayLine();
+                	JFrameChart.getChartController().activateRayLine();
                 }
             });
         }});        
@@ -243,7 +233,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activateHorizontalLine();
+                	JFrameChart.getChartController().activateHorizontalLine();
                 }
             });
         }});
@@ -252,7 +242,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activateVerticalLine();
+                	JFrameChart.getChartController().activateVerticalLine();
                 }
             });
         }});
@@ -261,7 +251,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().activateTextMode();
+                	JFrameChart.getChartController().activateTextMode();
                 }
             });
         }});
@@ -270,7 +260,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().zoomIn();
+                	JFrameChart.getChartController().zoomIn();
                 }
             });
         }});
@@ -279,7 +269,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().zoomOut();
+                	JFrameChart.getChartController().zoomOut();
                 }
             });
         }});
@@ -288,7 +278,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().addOHLCInformer();
+                	JFrameChart.getChartController().addOHLCInformer();
                 }
             });
         }});
@@ -297,7 +287,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().switchOfferSide(OfferSide.BID);
+                	JFrameChart.getChartController().switchOfferSide(OfferSide.BID);
                 }
             });
         }});
@@ -306,7 +296,7 @@ public class MainJFrame extends JFrame {
         	addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {                
-                	getChartController().switchOfferSide(OfferSide.ASK);
+                	JFrameChart.getChartController().switchOfferSide(OfferSide.ASK);
                 }
             });
         }});
@@ -315,7 +305,7 @@ public class MainJFrame extends JFrame {
             addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    getChartController().addMouseMotionListener(new MouseMotionListener(){
+                    JFrameChart.getChartController().addMouseMotionListener(new MouseMotionListener(){
                         @Override
                         public void mouseDragged(MouseEvent e){}
                         @Override
@@ -346,9 +336,6 @@ public class MainJFrame extends JFrame {
         ChartControlComm.cancelButton.setEnabled(false);
     }
 
-    private void addMouseEvent(MouseListener ml){
-
-    }
     protected void resetButtons(){
         ChartControlComm.startStrategyButton.setEnabled(true);
         ChartControlComm.pauseButton.setEnabled(false);

@@ -3,14 +3,13 @@ package ea.itrade.duk.ea;
 import com.dukascopy.api.*;
 import com.dukascopy.api.drawings.IHorizontalLineChartObject;
 import com.dukascopy.api.drawings.IOhlcChartObject;
-import com.dukascopy.api.drawings.ISignalUpChartObject;
+import com.dukascopy.api.feed.util.TimePeriodAggregationFeedDescriptor;
 import com.dukascopy.api.indicators.IIndicator;
 import com.dukascopy.api.indicators.IndicatorInfo;
 import ea.itrade.duk.base.Constants;
 import ea.itrade.duk.dto.StrategyDto;
 import ea.itrade.duk.enums.ChartPanelTypeEnum;
-import ea.itrade.duk.util.ArithUtil;
-import ea.itrade.duk.util.DateUtil;
+import ea.itrade.duk.util.ChartUtil;
 
 import java.awt.*;
 
@@ -33,13 +32,22 @@ public class MacdAndArw implements IStrategy {
     @Configurable("Signal period")
     public int signalMACDPeriod = 9;
 
-    IChartPanel rsiPanel;
+    IChartPanel chartPanel;
+
 
     private StrategyDto strategyDto;
+    private ChartUtil chartUtil;
 
     @Override
     public void onStart(IContext context) throws JFException {
         this.strategyDto = new StrategyDto(context);
+        this.strategyDto.getChart().setFeedDescriptor(new TimePeriodAggregationFeedDescriptor(
+                Instrument.EURUSD,
+                Constants.dataIntervalPeriod,
+                OfferSide.ASK,
+                Filter.NO_FILTER
+        ));
+        this.chartUtil = ChartUtil.builder().strategyDto(strategyDto).build();
         this.chart = context.getChart(instrument);
         this.console = context.getConsole();
         this.indicators = context.getIndicators();
@@ -50,14 +58,16 @@ public class MacdAndArw implements IStrategy {
         }
 
         //add macd
-        this.rsiPanel = chart.add(indicators.getIndicator("MACD"), new Object[]{fastMACDPeriod, slowMACDPeriod, signalMACDPeriod});
-        Constants.chartPanelMap.put(ChartPanelTypeEnum.ChartPanelType_MACD.getType(), this.rsiPanel);
+        this.chartPanel = chart.add(indicators.getIndicator("MACD"), new Object[]{fastMACDPeriod, slowMACDPeriod, signalMACDPeriod});
+        strategyDto.setChartPanel(chartPanel);
+
+        Constants.chartPanelMap.put(ChartPanelTypeEnum.ChartPanelType_MACD.getType(), this.chartPanel);
 
         //add an extra level line
         IHorizontalLineChartObject hLine = chart.getChartObjectFactory().createHorizontalLine("subHLine", 0.00002);
         hLine.setColor(Color.RED);
         hLine.setLineStyle(LineStyle.DASH_DOT_DOT);
-        this.rsiPanel.add(hLine);
+        this.chartPanel.add(hLine);
 
         IOhlcChartObject ohlc = null;
         for (IChartObject obj : chart.getAll()) {
@@ -73,7 +83,7 @@ public class MacdAndArw implements IStrategy {
 
         //we can't add to chart panels with isOverChart()=true
         IndicatorInfo emaInfo = indicators.getIndicator("EMA").getIndicatorInfo();
-        if (emaInfo.isOverChart() && rsiPanel instanceof IIndicatorPanel) {
+        if (emaInfo.isOverChart() && chartPanel instanceof IIndicatorPanel) {
             console.getOut().println("can't add " + emaInfo.getName() + " to the indicator panel since it can be plotted only on the main chart!");
         }
     }
@@ -85,34 +95,8 @@ public class MacdAndArw implements IStrategy {
     @Override
     public void onBar(Instrument instrument, Period period, IBar askBar, IBar bidBar) throws JFException {
         if (period == this.strategyDto.getChart().getSelectedPeriod()) {
-            this.createSignalMacdUp(askBar.getTime(),this.strategyDto.getChart().getSelectedPeriod() + " 底背离");
+            chartUtil.createSignalMacdUp(askBar.getTime(),this.strategyDto.getChart().getSelectedPeriod() + " 底背离");
         }
-    }
-
-    public void createSignalMacdUp(long time, String text) throws JFException {
-        String key = Constants.getMacdUpArwKey(time);
-        if(Constants.arrwMap.containsKey(key)){
-            return;
-        }
-        long from = strategyDto.getHistory().getBar(Instrument.EURUSD, this.strategyDto.getChart().getSelectedPeriod(), OfferSide.ASK, 1).getTime();
-        long to = strategyDto.getHistory().getBar(Instrument.EURUSD, this.strategyDto.getChart().getSelectedPeriod(), OfferSide.ASK, 0).getTime();
-        double[][] macds = strategyDto.getIndicators().macd(instrument, this.strategyDto.getChart().getSelectedPeriod(), OfferSide.ASK, Constants.appliedPrice, Constants.fastMACDPeriod, Constants.slowMACDPeriod, Constants.signalMACDPeriod, from, to);
-        long half = (to - from) / 2;
-
-        strategyDto.getConsole().getInfo().println(this.strategyDto.getChart().getSelectedPeriod() + " | " + DateUtil.dateToStr(to) + " | " + DateUtil.dateToStr(time) + " |----> " + ArithUtil.fromatString(macds[2][0]) + ":" + ArithUtil.fromatString(macds[2][1]));
-        double macd = macds[2][1];
-        if (macd > 0) {
-            macd = -Constants.macdArrowOffset;
-        } else {
-            macd -= Constants.macdArrowOffset;
-        }
-        ISignalUpChartObject signalArr = chart.getChartObjectFactory().createSignalUp(key,time + half, macd);
-        signalArr.setText(text);
-        signalArr.setLineWidth(3f);
-        signalArr.setStickToCandleTimeEnabled(false);
-        signalArr.setColor(Color.RED);
-        Constants.arrwMap.put(key, signalArr);
-        this.rsiPanel.add(signalArr);
     }
 
     @Override
@@ -134,5 +118,4 @@ public class MacdAndArw implements IStrategy {
             }
         }
     }
-
 }

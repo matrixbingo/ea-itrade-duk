@@ -1,32 +1,46 @@
-package ea.itrade.duk.jForex;
+package ea.itrade.duk.ea;
 
 
 import com.dukascopy.api.*;
 import com.dukascopy.api.IEngine.OrderCommand;
 import com.dukascopy.api.IIndicators.AppliedPrice;
+import com.dukascopy.api.drawings.IChartObjectFactory;
+import com.dukascopy.api.drawings.ISignalUpChartObject;
 import com.dukascopy.api.indicators.IIndicator;
+import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Doubles;
-import ea.itrade.duk.dto.MacdDto;
+import ea.itrade.duk.base.Mark;
+import ea.itrade.duk.sdkClient.component.base.ControlPanelUtil;
 import ea.itrade.duk.util.DateUtil;
+import ea.itrade.duk.util.StrUtil;
 
+import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
-
+@RequiresFullAccess
+@Library("C:\\Work\\.m2\\repository\\com\\google\\guava\\guava\\21.0\\guava-21.0.jar;C:\\Work\\.m2\\repository\\org\\apache\\commons\\commons-lang3\\3.4\\commons-lang3-3.4.jar")
 public class MacdBeili implements IStrategy {
 
+    private int counter = 0;
+    final private int capacity = 1000000;
     public static final int HIST = 2;
+    private static final String DATE_FORMAT_NOW = "yyyyMMdd_HHmmss";
+    private static ConcurrentHashMap<Long, Long> uptimeMaps = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<Long, Long> dwtimeMaps = new ConcurrentHashMap<>();
 
     private IOrder order;
+    private IChart chart;
     private IEngine engine;
     private IConsole console;
     private IHistory history;
     private IContext context;
     private IIndicators indicators;
-
-    private int counter = 0;
+    private IBar currBar;
 
     @Configurable("Instrument")
     public Instrument instrument = Instrument.EURUSD;
@@ -65,25 +79,53 @@ public class MacdBeili implements IStrategy {
         this.history = context.getHistory();
         this.engine = context.getEngine();
 
-        IChart chart = context.getChart(instrument);
-        if (chart != null) {
+        this.chart = context.getChart(instrument);
+        if (this.chart == null) {
+            this.console.getErr().println("No chart opened, can't plot indicators.");
+            this.context.stop();
+        } else if (this.chart != null) {
             chart.add(indicators.getIndicator("MACD"), new Object[]{fastMACDPeriod, slowMACDPeriod, signalMACDPeriod});
         }
     }
 
-    private HashSet<String> set = new HashSet<>();
     @Override
     public void onBar(Instrument instrument, Period period, IBar askBar, IBar bidBar) throws JFException {
-
-        if(!set.contains(period.name())){
-            set.add(period.name());
-            console.getInfo().println(period.name());
-        }
+        this.currBar = askBar;
+        //this.console.getInfo().println(this.getCurrentTime(this.currBar.getTime()));
         if (period != this.defaultPeriod || instrument != this.instrument) {
             return;
         }
-        if(this.isDiBeili(instrument)){
+        if (this.isDiBeili(instrument)) {
 
+        }
+    }
+
+    class MacdDto {
+        private int shift;
+        private double[] macd;
+
+        public MacdDto(int shift, double[] macd) {
+            this.shift = shift;
+            this.macd = macd;
+            this.macd[0] = macd[0] * 100000;
+            this.macd[1] = macd[1] * 100000;
+            this.macd[2] = macd[2] * 100000;
+        }
+
+        public int getShift() {
+            return shift;
+        }
+
+        public void setShift(int shift) {
+            this.shift = shift;
+        }
+
+        public double[] getMacd() {
+            return macd;
+        }
+
+        public void setMacd(double[] macd) {
+            this.macd = macd;
         }
     }
 
@@ -91,16 +133,25 @@ public class MacdBeili implements IStrategy {
         int leng = 4;
         int size = 3;
         boolean flag = false;
-        List<Double> macdlist = new ArrayList<>();
         List<MacdDto> oddList = new ArrayList<>();
         List<MacdDto> eveList = new ArrayList<>();
+        List<Double> macdlist = new ArrayList<>();
         List<IBar> askBarList = new ArrayList<>();
+        IBar askBar = this.context.getHistory().getBar(instrument, defaultPeriod, offerSide, 0);
+        long end = askBar.getTime();
+        long bin =   DateUtil.getTimeByPeriodAndDiffer(end, Mark.PERIOD_HOUR, -5);
+        double[][] macds = this.indicators.macd(instrument, this.defaultPeriod, offerSide, appliedPrice, fastMACDPeriod, slowMACDPeriod, signalMACDPeriod, Filter.NO_FILTER, bin, end);
+        console.getInfo().println("macds : ----> " + StrUtil.arrToString(macds[2]));
+        List<IBar> bars = this.context.getHistory().getBars(instrument, defaultPeriod, offerSide, Filter.NO_FILTER, bin, end);
+        console.getInfo().println("bars : ----> " + StrUtil.iBarlistToString(bars));
 
         for (int i = 0; i < 500; i++) {
-            IBar askBar = this.context.getHistory().getBar(instrument, defaultPeriod, offerSide, i);
+            askBar = this.context.getHistory().getBar(instrument, defaultPeriod, offerSide, i);
             double[] macd0 = this.indicators.macd(instrument, this.defaultPeriod, offerSide, appliedPrice, fastMACDPeriod, slowMACDPeriod, signalMACDPeriod, i);
             double[] macd1 = this.indicators.macd(instrument, this.defaultPeriod, offerSide, appliedPrice, fastMACDPeriod, slowMACDPeriod, signalMACDPeriod, i + 1);
-            macdlist.add(i, macd0[HIST]);
+            console.getInfo().println(askBar.getClose() + " | HIST : ----> " + macd1[2]);
+            ControlPanelUtil.pause();
+            macdlist.add(macd0[HIST] * capacity);
             askBarList.add(askBar);
             //1、3、5...
             if (macd0[HIST] > 0 && macd1[HIST] <= 0) {
@@ -111,29 +162,58 @@ public class MacdBeili implements IStrategy {
             }
             //2、4、6...
             if (flag && macd0[HIST] <= 0 && macd1[HIST] > 0) {
-                if (eveList.size() > size) {
+                if (eveList.size() < size) {
                     eveList.add(new MacdDto(i, macd0));
                 }
             }
-            if (oddList.size() > size && eveList.size() > size) {
+            if (oddList.size() >= size && eveList.size() >= size) {
                 break;
             }
         }
-
-        if (oddList.size() > size && eveList.size() > size) {
-            MacdDto macdDto1 = oddList.get(0);
-            MacdDto macdDto2 = eveList.get(0);
-            MacdDto macdDto3 = oddList.get(1);
-            MacdDto macdDto4 = eveList.get(1);
-            if(macdDto2.getShift() - macdDto1.getShift() > leng && macdDto3.getShift() - macdDto2.getShift() > leng && macdDto4.getShift() - macdDto3.getShift() > leng){
-                Map<String, Double> map0 = this.getMaxMinDouble(macdlist, macdDto1.getShift(), macdDto2.getShift());
-                Map<String, Double> map1 = this.getMaxMinDouble(macdlist, macdDto3.getShift(), macdDto4.getShift());
-                if(map0.get("min") > map1.get("min")){
-
+        //this.console.getInfo().println(this.getCurrentTime(this.currBar.getTime()) + "macdlist:" + StrUtil.listToString(macdlist));
+        //this.console.getInfo().println(this.getCurrentTime(this.currBar.getTime()) + "askBarList:" + StrUtil.iBarlistToString(askBarList));
+//        if (oddList.size() >= size && eveList.size() >= size && oddList.get(0).getShift() < 2) {
+        if (oddList.size() >= size && eveList.size() >= size) {
+            MacdDto macd1 = oddList.get(0);
+            MacdDto macd2 = eveList.get(0);
+            MacdDto macd3 = oddList.get(1);
+            MacdDto macd4 = eveList.get(1);
+            if (macd2.getShift() - macd1.getShift() > leng && macd3.getShift() - macd2.getShift() > leng && macd4.getShift() - macd3.getShift() > leng) {
+                Map<String, Double> macd_map0 = this.getMaxMinDouble(macdlist, macd1.getShift(), macd2.getShift());
+                Map<String, Double> macd_map1 = this.getMaxMinDouble(macdlist, macd3.getShift(), macd4.getShift());
+                Map<String, Double> bar_map0 = this.getMaxMinBar(askBarList, macd1.getShift(), macd2.getShift());
+                Map<String, Double> bar_map1 = this.getMaxMinBar(askBarList, macd3.getShift(), macd4.getShift());
+                if (macd_map0.get("min") > macd_map1.get("min") && bar_map0.get("min") < bar_map1.get("min")) {
+                    long time = askBarList.get(macd1.getShift()).getTime();
+                    this.createSignalUp(time);
+                    this.console.getInfo().println("diBeil----------------------------->" + this.getCurrentTime(time));
                 }
             }
         }
         return false;
+    }
+
+    private Map<String, Double> getMaxMinBar(List<IBar> list, int bin, int end) {
+        list = this.initBinEnd(list, bin, end);
+        Ordering<IBar> lowOrdering = Ordering.natural().nullsFirst().onResultOf(new Function<IBar, Double>() {
+            public Double apply(IBar bar) {
+                return bar.getLow();
+            }
+        });
+        Ordering<IBar> highOrdering = Ordering.natural().reverse().nullsFirst().onResultOf(new Function<IBar, Double>() {
+            @Override
+            public Double apply(IBar bar) {
+                return bar.getHigh();
+            }
+        });
+
+        final List<IBar> lowlist = lowOrdering.sortedCopy(list);
+        final List<IBar> highlist = highOrdering.sortedCopy(list);
+
+        return new HashMap<String, Double>() {{
+            put("max", highlist.get(0).getHigh());
+            put("min", lowlist.get(0).getLow());
+        }};
     }
 
     private List<MacdDto> sortMacdAsc(List<MacdDto> list) {
@@ -147,7 +227,7 @@ public class MacdBeili implements IStrategy {
     }
 
     private Map<String, MacdDto> getMaxMinMacd(List<MacdDto> list, int bin, int end) {
-        this.initBinEnd(bin, end);
+        list = this.initBinEnd(list, bin, end);
         list = list.subList(bin - 1, end);
         final List<MacdDto> _list = sortMacdAsc(list);
         return new HashMap<String, MacdDto>() {{
@@ -157,8 +237,7 @@ public class MacdBeili implements IStrategy {
     }
 
     private Map<String, Double> getMaxMinDouble(List<Double> list, int bin, int end) {
-        this.initBinEnd(bin, end);
-        list = list.subList(bin - 1, end);
+        list = this.initBinEnd(list, bin, end);
         final List<Double> _list = Ordering.natural().sortedCopy(list);
         return new HashMap<String, Double>() {{
             put("max", _list.get(_list.size() - 1));
@@ -166,12 +245,48 @@ public class MacdBeili implements IStrategy {
         }};
     }
 
-    private void initBinEnd(int bin, int end){
-        if (bin < end) {
-            int temp = bin;
-            bin = end;
-            end = temp;
+    private <T> List<T> initBinEnd(List<T> list, int bin, int end) {
+        try {
+            int start = Math.min(bin, end);
+            int last = Math.max(bin, end);
+            if (start == 0) {
+                list = list.subList(start, last);
+            } else {
+                list = list.subList(start - 1, last);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return list;
+    }
+
+    private void createSignalUp(Long time) throws JFException {
+        if (time == null) {
+            time = this.currBar.getTime();
+        }
+        try {
+            if (!uptimeMaps.containsKey(time)) {
+                uptimeMaps.put(time, time);
+                String chartKey = this.getChartKey("signalUp");
+                console.getInfo().println("chartKey: " + chartKey);
+                IChartObject chartObject = this.chart.get(chartKey);
+                console.getInfo().println("chartObject : " + chartObject);
+                if (chartObject == null) {
+                    console.getInfo().println("this.currBar.getTime(): " + this.currBar.getTime());
+                    IChartObjectFactory chartObjectFactory = chart.getChartObjectFactory();
+                    ISignalUpChartObject signalArr = chartObjectFactory.createSignalUp(chartKey, time, currBar.getLow() - 0.0001);
+                    signalArr.setStickToCandleTimeEnabled(false);
+                    signalArr.setColor(Color.YELLOW);
+                    this.chart.add(signalArr);
+                }
+            }
+        } catch (Exception e) {
+            console.getOut().println("Exception : " + e.toString());
+        }
+    }
+
+    private String getChartKey(String type) {
+        return type + this.currBar.getTime();
     }
 
     public void onTick(Instrument instrument, ITick tick) throws JFException {
@@ -234,7 +349,7 @@ public class MacdBeili implements IStrategy {
             } else if (ob instanceof double[]) {
                 print((double[][]) ob);
             } else if (ob instanceof Long) {
-                print(DateUtil.dateToStr((Long) ob));
+                print(dateToStr((Long) ob));
             } else {
                 print(ob);
             }
@@ -296,5 +411,20 @@ public class MacdBeili implements IStrategy {
 
     public String toDecimalToStr(double d) {
         return (new DecimalFormat("#.#######")).format(d);
+    }
+
+    public String dateToStr(Long time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss") {
+
+            {
+                setTimeZone(TimeZone.getTimeZone("GMT"));
+            }
+        };
+        return sdf.format(time);
+    }
+
+    private String getCurrentTime(long time) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
+        return sdf.format(time);
     }
 }

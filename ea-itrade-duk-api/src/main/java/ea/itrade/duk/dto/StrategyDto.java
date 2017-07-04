@@ -22,6 +22,7 @@ public class StrategyDto {
     private IIndicators indicators;
     private IAccount account;
     private IChart chart;
+    private IChartPanel chartPanel;
 
     public StrategyDto(IContext context){
         this.chart = context.getChart(Constants.instrument);

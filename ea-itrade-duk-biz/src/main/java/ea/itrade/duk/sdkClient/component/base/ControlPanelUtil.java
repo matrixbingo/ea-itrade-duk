@@ -295,4 +295,11 @@ public class ControlPanelUtil {
         ChartControlComm.continueButton.setEnabled(false);
         ChartControlComm.cancelButton.setEnabled(false);
     }
+
+    public static void pause(){
+        if(ChartControlComm.executionControl != null){
+            ChartControlComm.executionControl.pauseExecution();
+            ControlPanelUtil.updateButtons();
+        }
+    }
 }

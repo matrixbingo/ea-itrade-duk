@@ -1,6 +1,9 @@
 package ea.itrade.duk.util;
 
+import ea.itrade.duk.base.Mark;
+
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
@@ -16,17 +19,17 @@ public class DateUtil {
     public static String TIME_FORMAT_DETAIL = "yyyy-MM-dd HH:mm:ss";
 
     final private static ConcurrentHashMap<String, SimpleDateFormat> simpleDateFormatMap = new ConcurrentHashMap<String, SimpleDateFormat>() {{
-        put(DATE_FORMAT_INT, new SimpleDateFormat(DATE_FORMAT_INT){
+        put(DATE_FORMAT_INT, new SimpleDateFormat(DATE_FORMAT_INT) {
             {
                 setTimeZone(TimeZone.getTimeZone("GMT"));
             }
         });
-        put(DATE_FORMAT_BASE, new SimpleDateFormat(DATE_FORMAT_BASE){
+        put(DATE_FORMAT_BASE, new SimpleDateFormat(DATE_FORMAT_BASE) {
             {
                 setTimeZone(TimeZone.getTimeZone("GMT"));
             }
         });
-        put(TIME_FORMAT_DETAIL, new SimpleDateFormat(TIME_FORMAT_DETAIL){
+        put(TIME_FORMAT_DETAIL, new SimpleDateFormat(TIME_FORMAT_DETAIL) {
             {
                 setTimeZone(TimeZone.getTimeZone("GMT"));
             }
@@ -49,7 +52,6 @@ public class DateUtil {
     }
 
     /**
-     *
      * @param time
      * @return
      */
@@ -57,12 +59,12 @@ public class DateUtil {
         return DateUtil.getSdf(TIME_FORMAT_DETAIL).format(time);
     }
 
-    public static String getFormatedDateString(float timeZoneOffset){
+    public static String getFormatedDateString(float timeZoneOffset) {
         if (timeZoneOffset > 13 || timeZoneOffset < -12) {
             timeZoneOffset = 0;
         }
 
-        int newTime=(int)(timeZoneOffset * 60 * 60 * 1000);
+        int newTime = (int) (timeZoneOffset * 60 * 60 * 1000);
         TimeZone timeZone;
         String[] ids = TimeZone.getAvailableIDs(newTime);
         if (ids.length == 0) {
@@ -94,11 +96,42 @@ public class DateUtil {
         return date;
     }
 
+    final public static long getTimeByPeriodAndDiffer(long time, int type, int difference) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date(time));
+        switch (type) {
+            case Mark.PERIOD_SECOND:
+                calendar.add(Calendar.SECOND, difference);
+                break;
+            case Mark.PERIOD_MINUTE:
+                calendar.add(Calendar.MINUTE, difference);
+                break;
+            case Mark.PERIOD_HOUR:
+                calendar.add(Calendar.HOUR, difference);
+                break;
+            case Mark.PERIOD_DAY:
+                calendar.add(Calendar.DAY_OF_YEAR, difference);
+                break;
+            case Mark.PERIOD_WEEK:
+                calendar.add(Calendar.WEEK_OF_YEAR, difference);
+                break;
+            case Mark.PERIOD_MONTH:
+                calendar.add(Calendar.MONTH, difference);
+                break;
+        }
+        return calendar.getTimeInMillis();
+    }
+
+
     public static void main(String[] args) {
-        System.out.println(dateToStr(1496656422439L));
-        long time = System.currentTimeMillis();
+   /*       System.out.println(dateToStr(1496656422439L));
+      long time = System.currentTimeMillis();
         System.out.println(time);
         System.out.println(dateToStr(time));
-        System.out.println(getFormatedDateString(8));
+        System.out.println(getFormatedDateString(8));*/
+
+        long time = 1496656422439L;
+        System.out.println(dateToStr(time));
+        System.out.println(dateToStr(getTimeByPeriodAndDiffer(time, Mark.PERIOD_MONTH, 12)));
     }
 }

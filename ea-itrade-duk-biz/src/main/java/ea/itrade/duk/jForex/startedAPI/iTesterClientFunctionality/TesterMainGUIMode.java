@@ -41,7 +41,7 @@ import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import com.dukascopy.api.system.tester.ITesterGui;
 import com.dukascopy.api.system.tester.ITesterUserInterface;
 import ea.itrade.duk.base.JForexUser;
-import ea.itrade.duk.jForex.strategyAPI.chart_Objects.examples.RayLinePriceByShift;
+import ea.itrade.duk.ea.MacdBeili;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -362,7 +362,7 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
         //IStrategy strategy = new IntersectionPointInd(); //SMA死叉
         //IStrategy strategy = new IntersectionPoint(); //
         //IStrategy strategy = new PolyLine(); //
-        IStrategy strategy = new RayLinePriceByShift(); //
+        //IStrategy strategy = new RayLinePriceByShift(); //
         //IStrategy strategy = new RayLinePriceByShiftFilter(); //
         //IStrategy strategy = new LevelLines(); //
         //IStrategy strategy = new DrawOnAllCharts(); //
@@ -382,7 +382,7 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
         //IStrategy strategy = new PlotEmaMacdWithOhlc();
         //IStrategy strategy = new MartingaleWtihMA(); //
         //IStrategy strategy = new MacdAndArw();
-
+        IStrategy strategy =  new MacdBeili();
 
         TesterMainGUIMode testerMainGUI = new TesterMainGUIMode(strategy);
         testerMainGUI.showChartFrame();

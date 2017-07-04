@@ -13,8 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by liang.wang.sh on 2017/7/2.
  */
 public class Constants {
-    final public static String dateFrom = "2011-05-25 00:00:00";
-    final public static String dateEnd  = "2011-05-27 00:00:00";
+    final public static String dateFrom = "2011-05-20 00:21:00";
+    final public static String dateEnd  = "2011-06-27 00:00:00";
     final public static Instrument instrument = Instrument.EURUSD;
     final public static OfferSide offerSide = OfferSide.ASK;
     final public static AppliedPrice appliedPrice = AppliedPrice.CLOSE;
@@ -22,12 +22,15 @@ public class Constants {
     final public static int slowMACDPeriod = 26;
     final public static int signalMACDPeriod = 9;
     final public static double macdArrowOffset = 0.00002D;
+    final public static Period dataIntervalPeriod = Period.THIRTY_MINS;
+
     final public static IFeedDescriptor feedDescriptor = new TimePeriodAggregationFeedDescriptor(
             Instrument.EURUSD,
-            Period.TEN_MINS,
-            OfferSide.ASK,
+            dataIntervalPeriod,
+            offerSide,
             Filter.NO_FILTER
     );
+
 
     final public static Map<String, ISignalUpChartObject> arrwMap = new ConcurrentHashMap<>();
     final public static Map<String, IChartPanel> chartPanelMap = new ConcurrentHashMap<>();

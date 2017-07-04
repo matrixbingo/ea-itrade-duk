@@ -4,6 +4,7 @@ import com.dukascopy.api.*;
 import com.dukascopy.api.feed.util.TimePeriodAggregationFeedDescriptor;
 import com.dukascopy.api.system.tester.ITesterChartController;
 import com.dukascopy.api.system.tester.ITesterGui;
+import ea.itrade.duk.base.Constants;
 
 import javax.swing.*;
 import java.awt.event.ItemEvent;
@@ -42,6 +43,8 @@ public class JPeriodComboBox extends JComboBox implements ItemListener {
         for (Period period : periods.keySet()) {
             this.addItem(period);
         }
+
+        this.setSelectedItem(Constants.dataIntervalPeriod);
     }
 
     @Override
