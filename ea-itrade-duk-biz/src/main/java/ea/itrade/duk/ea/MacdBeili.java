@@ -17,7 +17,6 @@ import ea.itrade.duk.dto.CandleDto;
 import ea.itrade.duk.dto.MacdDto;
 import ea.itrade.duk.dto.MaxMinDto;
 import ea.itrade.duk.dto.StrategyDto;
-import ea.itrade.duk.sdkClient.component.base.ControlPanelUtil;
 import ea.itrade.duk.util.ArithUtil;
 import ea.itrade.duk.util.ChartUtil;
 import ea.itrade.duk.util.SortUtil;
@@ -27,8 +26,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RequiresFullAccess
@@ -143,7 +144,7 @@ public class MacdBeili implements IStrategy {
                 if (oddCandles.size() < size) {
                     oddCandles.add(CandleDto.builder().time(bar.getTime()).bar(bar).shift(i).hist(histCurr).build());
                     this.console.getInfo().println("CandleDto ---->" + CandleDto.builder().time(bar.getTime()).bar(bar).shift(i).histStr(ArithUtil.fromatString(histCurr)).build());
-                    ControlPanelUtil.pause();
+                    //ControlPanelUtil.pause();
                 }
             }
             //2、4、6...
@@ -151,7 +152,7 @@ public class MacdBeili implements IStrategy {
                 if (eveCandles.size() < size) {
                     eveCandles.add(CandleDto.builder().time(bar.getTime()).bar(bar).shift(i).hist(histCurr).build());
                     this.console.getInfo().println("CandleDto ---->" + CandleDto.builder().time(bar.getTime()).bar(bar).shift(i).histStr(ArithUtil.fromatString(histCurr)).build());
-                    ControlPanelUtil.pause();
+                    //ControlPanelUtil.pause();
                 }
             }
             if (eveCandles.size() >= size && eveCandles.size() >= size) {
@@ -162,7 +163,7 @@ public class MacdBeili implements IStrategy {
         if (oddCandles.size() >= size && eveCandles.size() >= size) {
             this.console.getInfo().println("oddCandles |--->" + oddCandles);
             this.console.getInfo().println("eveCandles |--->" + eveCandles);
-            ControlPanelUtil.pause();
+            //ControlPanelUtil.pause();
             CandleDto c1 = oddCandles.get(0);
             CandleDto c2 = eveCandles.get(0);
             CandleDto c3 = oddCandles.get(1);
