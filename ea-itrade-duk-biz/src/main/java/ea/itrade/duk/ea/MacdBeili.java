@@ -109,7 +109,7 @@ public class MacdBeili implements IStrategy {
             return;
         }
         if (this.isDiBeili(askBar)) {
-            this.chartUtil.createSignalMacdUp(askBar.getTime(), this.strategyDto.getChart().getSelectedPeriod() + " 底背离");
+
         }
     }
 
@@ -168,15 +168,17 @@ public class MacdBeili implements IStrategy {
             CandleDto c2 = eveCandles.get(0);
             CandleDto c3 = oddCandles.get(1);
             CandleDto c4 = eveCandles.get(1);
-            if (Math.abs(c2.getShift() - c1.getShift()) > leng && Math.abs(c3.getShift() - c2.getShift()) > leng && Math.abs(c4.getShift() - c3.getShift()) > leng) {
+            if (Math.abs(c2.getShift() - c1.getShift()) > leng && Math.abs(c3.getShift() - c2.getShift()) >= 1 && Math.abs(c4.getShift() - c3.getShift()) > leng) {
                 MaxMinDto macd_map0 = this.getMaxMinDouble(macdlist, c1.getShift(), c2.getShift());
                 MaxMinDto macd_map1 = this.getMaxMinDouble(macdlist, c3.getShift(), c4.getShift());
                 MaxMinDto bar_map0 = this.getMaxMinBar(bars, c1.getShift(), c2.getShift());
                 MaxMinDto bar_map1 = this.getMaxMinBar(bars, c3.getShift(), c4.getShift());
                 if (macd_map0.getMin() > macd_map1.getMin() && bar_map0.getMin() < bar_map1.getMin()) {
                     long time = bars.get(c1.getShift()).getTime();
+                    this.chartUtil.createSignalMacdUp(time, this.strategyDto.getChart().getSelectedPeriod() + " dibeili");
                     this.createSignalUp(time);
-                    this.console.getInfo().println("diBeil----------------------------->" + this.getCurrentTime(time));
+                    return true;
+                    //this.console.getInfo().println("diBeil----------------------------->" + this.getCurrentTime(time));
                 }
             }
         }
