@@ -8,7 +8,6 @@ import com.dukascopy.api.indicators.IIndicator;
 import com.dukascopy.api.indicators.IndicatorInfo;
 import ea.itrade.duk.base.Constants;
 import ea.itrade.duk.dto.StrategyDto;
-import ea.itrade.duk.enums.ChartPanelTypeEnum;
 import ea.itrade.duk.util.ChartUtil;
 
 import java.awt.*;
@@ -45,7 +44,7 @@ public class MacdAndArw implements IStrategy {
                 Instrument.EURUSD,
                 Constants.dataIntervalPeriod,
                 OfferSide.ASK,
-                Filter.NO_FILTER
+                Constants.filer
         ));
         this.chartUtil = ChartUtil.builder().strategyDto(strategyDto).build();
         this.chart = context.getChart(instrument);
@@ -61,7 +60,7 @@ public class MacdAndArw implements IStrategy {
         this.chartPanel = chart.add(indicators.getIndicator("MACD"), new Object[]{fastMACDPeriod, slowMACDPeriod, signalMACDPeriod});
         strategyDto.setChartPanel(chartPanel);
 
-        Constants.chartPanelMap.put(ChartPanelTypeEnum.ChartPanelType_MACD.getType(), this.chartPanel);
+        //Constants.chartPanelMap.put(ChartPanelTypeEnum.ChartPanelType_MACD.getType(), this.chartPanel);
 
         //add an extra level line
         IHorizontalLineChartObject hLine = chart.getChartObjectFactory().createHorizontalLine("subHLine", 0.00002);

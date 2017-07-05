@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * Created by liang.wang.sh on 2017/7/1.
  */
@@ -32,5 +34,17 @@ public class StrategyDto {
         this.history = context.getHistory();
         this.indicators = context.getIndicators();
         this.account = context.getAccount();
+    }
+
+    public IBar getBar(Period period, int shift) throws JFException{
+        return this.history.getBar(Constants.instrument, period, Constants.offerSide, shift);
+    }
+
+    public List<IBar> getBars(Period period, long from, long to) throws JFException{
+        return this.history.getBars(Constants.instrument, period, Constants.offerSide, Constants.filer, from, to);
+    }
+
+    public double[][] macd( Period period, long from, long to) throws JFException{
+        return this.indicators.macd(Constants.instrument, period, Constants.offerSide, Constants.appliedPrice, Constants.fastMACDPeriod, Constants.slowMACDPeriod, Constants.signalMACDPeriod, Constants.filer, from, to);
     }
 }

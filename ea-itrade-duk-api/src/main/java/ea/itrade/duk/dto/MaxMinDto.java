@@ -6,13 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Created by wangliang on 2017/6/20.
+ * Created by wangliang on 2017/7/5.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MacdDto {
-    private int shift;
-    private double hist;
+public class MaxMinDto {
+    private double max;
+    private double min;
 }

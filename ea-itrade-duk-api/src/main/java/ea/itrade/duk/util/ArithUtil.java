@@ -13,7 +13,9 @@ public class ArithUtil {
      */
     private static final int DEFAULT_DIV_SCALE = 32;
 
-    final private static String FROMAT_PATTERN =  "###############0.##################";
+    final private static String FROMAT_PATTERN = "###############0.##################";
+
+    final private static String FROMAT_MACD_HIST = "###############0.######";
 
     private ArithUtil() {
     }
@@ -417,5 +419,7 @@ public class ArithUtil {
         String aa = "-4.99183553218834E-7";
         System.out.println(fromatString(aa));
         System.out.println(fromatString(rs));
+
+        System.out.println(round(0.000046851325470302, 5));
     }
 }

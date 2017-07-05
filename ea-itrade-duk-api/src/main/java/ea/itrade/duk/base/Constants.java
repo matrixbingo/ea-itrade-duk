@@ -23,6 +23,7 @@ public class Constants {
     final public static int signalMACDPeriod = 9;
     final public static double macdArrowOffset = 0.00002D;
     final public static Period dataIntervalPeriod = Period.THIRTY_MINS;
+    final public static Filter filer = Filter.WEEKENDS;
 
     final public static IFeedDescriptor feedDescriptor = new TimePeriodAggregationFeedDescriptor(
             Instrument.EURUSD,
@@ -33,7 +34,7 @@ public class Constants {
 
 
     final public static Map<String, ISignalUpChartObject> arrwMap = new ConcurrentHashMap<>();
-    final public static Map<String, IChartPanel> chartPanelMap = new ConcurrentHashMap<>();
+    //final public static Map<String, IChartPanel> chartPanelMap = new ConcurrentHashMap<>();
 
     public static String getChartKey(String type, long time) {
         return type + "_" + time;
