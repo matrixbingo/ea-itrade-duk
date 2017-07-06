@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RequiresFullAccess
 @Library("C:\\Work\\.m2\\repository\\com\\google\\guava\\guava\\21.0\\guava-21.0.jar;C:\\Work\\.m2\\repository\\org\\apache\\commons\\commons-lang3\\3.4\\commons-lang3-3.4.jar")
-public class MacdBeili implements IStrategy {
+public class MacdDeviate implements IStrategy {
 
     private int counter = 0;
     final private int capacity = 1000000;
@@ -108,18 +108,13 @@ public class MacdBeili implements IStrategy {
         if (period != this.defaultPeriod || instrument != this.instrument) {
             return;
         }
-        if (this.isDiBeili(askBar)) {
+        if (this.isDeviate(askBar)) {
 
         }
     }
 
-    private boolean isDiBeili(IBar askBar) throws JFException {
-        int leng = 4;
-        int size = 3;
-        boolean flag = false;
-        List<Double> macdlist = new ArrayList<>();
-        List<CandleDto> oddCandles = new ArrayList<>();
-        List<CandleDto> eveCandles = new ArrayList<>();
+    private boolean isDeviate(IBar askBar) throws JFException {
+
         IBar barCurr = askBar;
         IBar barPrev = this.strategyDto.getBar(defaultPeriod, 500);
 
@@ -131,6 +126,19 @@ public class MacdBeili implements IStrategy {
         double[] hist = macds[HIST];
         ArrayUtils.reverse(hist);
         console.getInfo().println("hist : ----> (" + hist.length + ")" + StrUtil.arrToString(hist));
+        //this.isDeviateDw(bars, hist);
+
+        this.isDeviateUp(bars, hist);
+        return false;
+    }
+
+    private boolean isDeviateDw(List<IBar> bars, double[] hist) throws JFException {
+        int leng = 4;
+        int size = 3;
+        boolean flag = false;
+        List<Double> macdlist = new ArrayList<>();
+        List<CandleDto> oddCandles = new ArrayList<>();
+        List<CandleDto> eveCandles = new ArrayList<>();
 
         for (int i = 0; i < bars.size() - 1; i++) {
             IBar bar = bars.get(i);
@@ -161,8 +169,8 @@ public class MacdBeili implements IStrategy {
         }
 
         if (oddCandles.size() >= size && eveCandles.size() >= size) {
-            this.console.getInfo().println("oddCandles |--->" + oddCandles);
-            this.console.getInfo().println("eveCandles |--->" + eveCandles);
+            //this.console.getInfo().println("oddCandles |--->" + oddCandles);
+            //this.console.getInfo().println("eveCandles |--->" + eveCandles);
             //ControlPanelUtil.pause();
             CandleDto c1 = oddCandles.get(0);
             CandleDto c2 = eveCandles.get(0);
@@ -176,6 +184,67 @@ public class MacdBeili implements IStrategy {
                 if (macd_map0.getMin() > macd_map1.getMin() && bar_map0.getMin() < bar_map1.getMin()) {
                     long time = bars.get(c1.getShift()).getTime();
                     this.chartUtil.createSignalMacdUp(time, this.strategyDto.getChart().getSelectedPeriod() + " dibeili");
+                    this.createSignalUp(time);
+                    return true;
+                    //this.console.getInfo().println("diBeil----------------------------->" + this.getCurrentTime(time));
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isDeviateUp(List<IBar> bars, double[] hist) throws JFException {
+        int leng = 4;
+        int size = 3;
+        boolean flag = false;
+        List<Double> macdlist = new ArrayList<>();
+        List<CandleDto> oddCandles = new ArrayList<>();
+        List<CandleDto> eveCandles = new ArrayList<>();
+
+        for (int i = 0; i < bars.size() - 1; i++) {
+            IBar bar = bars.get(i);
+            double histCurr = ArithUtil.round(hist[i], 5);
+            double histPrev = ArithUtil.round(hist[i + 1], 5);
+
+            macdlist.add(histCurr * capacity);
+            //1、3、5...
+            if (histCurr < 0 && histPrev >= 0) {
+                flag = true;
+                if (oddCandles.size() < size) {
+                    oddCandles.add(CandleDto.builder().time(bar.getTime()).bar(bar).shift(i).hist(histCurr).build());
+                    this.console.getInfo().println("CandleDto ---->" + CandleDto.builder().time(bar.getTime()).bar(bar).shift(i).histStr(ArithUtil.fromatString(histCurr)).build());
+                    //ControlPanelUtil.pause();
+                }
+            }
+            //2、4、6...
+            if (flag && histCurr >= 0 && histPrev < 0) {
+                if (eveCandles.size() < size) {
+                    eveCandles.add(CandleDto.builder().time(bar.getTime()).bar(bar).shift(i).hist(histCurr).build());
+                    this.console.getInfo().println("CandleDto ---->" + CandleDto.builder().time(bar.getTime()).bar(bar).shift(i).histStr(ArithUtil.fromatString(histCurr)).build());
+                    //ControlPanelUtil.pause();
+                }
+            }
+            if (eveCandles.size() >= size && eveCandles.size() >= size) {
+                break;
+            }
+        }
+
+        if (oddCandles.size() >= size && eveCandles.size() >= size) {
+            //this.console.getInfo().println("oddCandles |--->" + oddCandles);
+            //this.console.getInfo().println("eveCandles |--->" + eveCandles);
+            //ControlPanelUtil.pause();
+            CandleDto c1 = oddCandles.get(0);
+            CandleDto c2 = eveCandles.get(0);
+            CandleDto c3 = oddCandles.get(1);
+            CandleDto c4 = eveCandles.get(1);
+            if (Math.abs(c2.getShift() - c1.getShift()) > leng && Math.abs(c3.getShift() - c2.getShift()) >= 1 && Math.abs(c4.getShift() - c3.getShift()) > leng) {
+                MaxMinDto macd_map0 = this.getMaxMinDouble(macdlist, c1.getShift(), c2.getShift());
+                MaxMinDto macd_map1 = this.getMaxMinDouble(macdlist, c3.getShift(), c4.getShift());
+                MaxMinDto bar_map0 = this.getMaxMinBar(bars, c1.getShift(), c2.getShift());
+                MaxMinDto bar_map1 = this.getMaxMinBar(bars, c3.getShift(), c4.getShift());
+                if (macd_map0.getMax() < macd_map1.getMax() && bar_map0.getMax() > bar_map1.getMax()) {
+                    long time = bars.get(c1.getShift()).getTime();
+                    this.chartUtil.createSignalMacdUp(time, this.strategyDto.getChart().getSelectedPeriod() + " deviate up");
                     this.createSignalUp(time);
                     return true;
                     //this.console.getInfo().println("diBeil----------------------------->" + this.getCurrentTime(time));

@@ -41,7 +41,7 @@ import com.dukascopy.api.system.tester.ITesterExecutionControl;
 import com.dukascopy.api.system.tester.ITesterGui;
 import com.dukascopy.api.system.tester.ITesterUserInterface;
 import ea.itrade.duk.base.JForexUser;
-import ea.itrade.duk.ea.MacdBeili;
+import ea.itrade.duk.ea.MacdDeviate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -382,7 +382,7 @@ public class TesterMainGUIMode extends JFrame implements ITesterUserInterface, I
         //IStrategy strategy = new PlotEmaMacdWithOhlc();
         //IStrategy strategy = new MartingaleWtihMA(); //
         //IStrategy strategy = new MacdAndArw();
-        IStrategy strategy =  new MacdBeili();
+        IStrategy strategy =  new MacdDeviate();
 
         TesterMainGUIMode testerMainGUI = new TesterMainGUIMode(strategy);
         testerMainGUI.showChartFrame();

@@ -7,7 +7,7 @@ import com.dukascopy.api.system.TesterFactory;
 import com.dukascopy.api.system.tester.*;
 import ea.itrade.duk.base.Constants;
 import ea.itrade.duk.base.JForexUser;
-import ea.itrade.duk.ea.MacdBeili;
+import ea.itrade.duk.ea.MacdDeviate;
 import ea.itrade.duk.sdkClient.component.base.ChartControlComm;
 import ea.itrade.duk.sdkClient.component.base.ControlPanelUtil;
 import ea.itrade.duk.util.DateUtil;
@@ -183,7 +183,7 @@ public class ChartControl extends MainJFrame implements ITesterUserInterface, IT
 
     public static void main(String[] args) throws Exception {
         //IStrategy strategy = new MacdAndArw();
-        IStrategy strategy = new MacdBeili();
+        IStrategy strategy = new MacdDeviate();
         ChartControl chartControl = new ChartControl(strategy);
         chartControl.showChartFrame();
 

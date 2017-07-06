@@ -172,7 +172,7 @@ public class TesterMainCustomReport {
 
         client.startStrategy(
                 new CandlePatternsMultiple(),
-                //new MacdBeili(),
+                //new MacdDeviate(),
                 new LoadingProgressListener() {
 
                     @Override

@@ -36,7 +36,7 @@ import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
 import ea.itrade.duk.base.JForexUser;
-import ea.itrade.duk.ea.MacdBeili;
+import ea.itrade.duk.ea.MacdDeviate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +145,7 @@ public class TesterMain {
         //IStrategy strategy =  new PrintPriceDifference();
         //IStrategy strategy =  new LoggingValues();
         //IStrategy strategy =  new SmaTrendStrategy();
-        IStrategy strategy =  new MacdBeili();
+        IStrategy strategy =  new MacdDeviate();
         run(strategy);
         //now it's running
     }
