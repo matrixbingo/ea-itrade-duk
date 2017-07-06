@@ -1,8 +1,11 @@
 package ea.itrade.duk.base;
 
-import com.dukascopy.api.*;
+import com.dukascopy.api.Filter;
 import com.dukascopy.api.IIndicators.AppliedPrice;
-import com.dukascopy.api.drawings.ISignalUpChartObject;
+import com.dukascopy.api.Instrument;
+import com.dukascopy.api.OfferSide;
+import com.dukascopy.api.Period;
+import com.dukascopy.api.drawings.IChartDependentChartObject;
 import com.dukascopy.api.feed.IFeedDescriptor;
 import com.dukascopy.api.feed.util.TimePeriodAggregationFeedDescriptor;
 
@@ -21,7 +24,7 @@ public class Constants {
     final public static int fastMACDPeriod = 12;
     final public static int slowMACDPeriod = 26;
     final public static int signalMACDPeriod = 9;
-    final public static double macdArrowOffset = 0.00002D;
+    final public static double macdArrowOffset = 0.0002D;
     final public static Period dataIntervalPeriod = Period.THIRTY_MINS;
     final public static Filter filer = Filter.WEEKENDS;
 
@@ -32,19 +35,18 @@ public class Constants {
             Filter.NO_FILTER
     );
 
-
-    final public static Map<String, ISignalUpChartObject> arrwMap = new ConcurrentHashMap<>();
+    final public static Map<String, IChartDependentChartObject> arrwMap = new ConcurrentHashMap<>();
     //final public static Map<String, IChartPanel> chartPanelMap = new ConcurrentHashMap<>();
 
     public static String getChartKey(String type, long time) {
         return type + "_" + time;
     }
 
-    public static String getMacdUpArwKey(long time) {
-        return getChartKey("MacdUpKey", time);
+    public static String getMacdUpArwKey(Period period, long time) {
+        return getChartKey(period + "MacdUpKey", time);
     }
 
-    public static String getMacdDwArwKey(long time) {
-        return getChartKey("MacdDwKey", time);
+    public static String getMacdDwArwKey(Period period, long time) {
+        return getChartKey(period + "MacdDwKey", time);
     }
 }

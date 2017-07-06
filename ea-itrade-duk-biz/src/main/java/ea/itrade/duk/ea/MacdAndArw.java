@@ -94,7 +94,8 @@ public class MacdAndArw implements IStrategy {
     @Override
     public void onBar(Instrument instrument, Period period, IBar askBar, IBar bidBar) throws JFException {
         if (period == this.strategyDto.getChart().getSelectedPeriod()) {
-            chartUtil.createSignalMacdUp(askBar.getTime(),this.strategyDto.getChart().getSelectedPeriod() + " 底背离");
+            chartUtil.createSignalMacdUp(askBar.getTime(),this.strategyDto.getChart().getSelectedPeriod() + "up");
+            chartUtil.createSignalMacdDw(askBar.getTime(),this.strategyDto.getChart().getSelectedPeriod() + "dw");
         }
     }
 
