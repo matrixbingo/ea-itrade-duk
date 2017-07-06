@@ -126,7 +126,7 @@ public class MacdDeviate implements IStrategy {
         double[] hist = macds[HIST];
         ArrayUtils.reverse(hist);
         console.getInfo().println("hist : ----> (" + hist.length + ")" + StrUtil.arrToString(hist));
-        //this.isDeviateDw(bars, hist);
+        this.isDeviateDw(bars, hist);
 
         this.isDeviateUp(bars, hist);
         return false;
@@ -169,22 +169,22 @@ public class MacdDeviate implements IStrategy {
         }
 
         if (oddCandles.size() >= size && eveCandles.size() >= size) {
-            //this.console.getInfo().println("oddCandles |--->" + oddCandles);
-            //this.console.getInfo().println("eveCandles |--->" + eveCandles);
-            //ControlPanelUtil.pause();
             CandleDto c1 = oddCandles.get(0);
             CandleDto c2 = eveCandles.get(0);
             CandleDto c3 = oddCandles.get(1);
             CandleDto c4 = eveCandles.get(1);
-            if (Math.abs(c2.getShift() - c1.getShift()) > leng && Math.abs(c3.getShift() - c2.getShift()) >= 1 && Math.abs(c4.getShift() - c3.getShift()) > leng) {
+            if (c1.getShift() < 3 && Math.abs(c2.getShift() - c1.getShift()) > leng && Math.abs(c3.getShift() - c2.getShift()) >= 1 && Math.abs(c4.getShift() - c3.getShift()) > leng) {
                 MaxMinDto macd_map0 = this.getMaxMinDouble(macdlist, c1.getShift(), c2.getShift());
                 MaxMinDto macd_map1 = this.getMaxMinDouble(macdlist, c3.getShift(), c4.getShift());
                 MaxMinDto bar_map0 = this.getMaxMinBar(bars, c1.getShift(), c2.getShift());
                 MaxMinDto bar_map1 = this.getMaxMinBar(bars, c3.getShift(), c4.getShift());
                 if (macd_map0.getMin() > macd_map1.getMin() && bar_map0.getMin() < bar_map1.getMin()) {
+                    //this.console.getInfo().println("oddCandles |--->" + oddCandles);
+                    //this.console.getInfo().println("eveCandles |--->" + eveCandles);
                     long time = bars.get(c1.getShift()).getTime();
                     this.chartUtil.createSignalMacdUp(time, this.strategyDto.getChart().getSelectedPeriod() + " dibeili");
-                    this.createSignalUp(time);
+                    //ControlPanelUtil.pause();
+                    //this.createSignalUp(time);
                     return true;
                     //this.console.getInfo().println("diBeil----------------------------->" + this.getCurrentTime(time));
                 }
@@ -237,15 +237,15 @@ public class MacdDeviate implements IStrategy {
             CandleDto c2 = eveCandles.get(0);
             CandleDto c3 = oddCandles.get(1);
             CandleDto c4 = eveCandles.get(1);
-            if (Math.abs(c2.getShift() - c1.getShift()) > leng && Math.abs(c3.getShift() - c2.getShift()) >= 1 && Math.abs(c4.getShift() - c3.getShift()) > leng) {
+            if (c1.getShift() < 3 && Math.abs(c2.getShift() - c1.getShift()) > leng && Math.abs(c3.getShift() - c2.getShift()) >= 1 && Math.abs(c4.getShift() - c3.getShift()) > leng) {
                 MaxMinDto macd_map0 = this.getMaxMinDouble(macdlist, c1.getShift(), c2.getShift());
                 MaxMinDto macd_map1 = this.getMaxMinDouble(macdlist, c3.getShift(), c4.getShift());
                 MaxMinDto bar_map0 = this.getMaxMinBar(bars, c1.getShift(), c2.getShift());
                 MaxMinDto bar_map1 = this.getMaxMinBar(bars, c3.getShift(), c4.getShift());
                 if (macd_map0.getMax() < macd_map1.getMax() && bar_map0.getMax() > bar_map1.getMax()) {
                     long time = bars.get(c1.getShift()).getTime();
-                    this.chartUtil.createSignalMacdUp(time, this.strategyDto.getChart().getSelectedPeriod() + " deviate up");
-                    this.createSignalUp(time);
+                    this.chartUtil.createSignalMacdDw(time, this.strategyDto.getChart().getSelectedPeriod() + " deviate up");
+                    //this.createSignalUp(time);
                     return true;
                     //this.console.getInfo().println("diBeil----------------------------->" + this.getCurrentTime(time));
                 }
