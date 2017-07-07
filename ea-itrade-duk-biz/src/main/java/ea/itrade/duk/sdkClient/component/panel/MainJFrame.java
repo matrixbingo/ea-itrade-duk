@@ -67,8 +67,6 @@ public class MainJFrame extends JFrame {
         this.validate();
         chartPanel.repaint();
     }
-    
-
 
     /**
      * Add buttons to start/pause/continue/cancel actions  and other buttons

@@ -17,6 +17,7 @@ import java.util.Map;
  */
 @SuppressWarnings("serial")
 public class JPeriodComboBox extends JComboBox implements ItemListener {
+    public static boolean flag = false;
     private JFrame mainFrame = null;
     private Map<IChart, ITesterGui> chartPanels = null;
     private Map<Period, DataType> periods = new LinkedHashMap<Period, DataType>();
@@ -49,6 +50,9 @@ public class JPeriodComboBox extends JComboBox implements ItemListener {
 
     @Override
     public void itemStateChanged(ItemEvent e) {
+        if(!flag){
+            return;
+        }
         if (e.getStateChange() == ItemEvent.SELECTED) {
             if (chartPanels != null && chartPanels.size() > 0) {
                 IChart chart = chartPanels.keySet().iterator().next();
@@ -62,8 +66,8 @@ public class JPeriodComboBox extends JComboBox implements ItemListener {
                 chartController.setFeedDescriptor(new TimePeriodAggregationFeedDescriptor(
                         Instrument.EURUSD,
                         period,
-                        OfferSide.ASK,
-                        Filter.NO_FILTER
+                        Constants.offerSide,
+                        Constants.filer
                 ));
 
                 mainFrame.setTitle(chart.getInstrument().toString() + " " + chart.getSelectedOfferSide() + " " + chart.getSelectedPeriod());

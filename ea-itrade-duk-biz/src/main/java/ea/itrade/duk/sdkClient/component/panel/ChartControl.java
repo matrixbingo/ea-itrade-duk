@@ -1,19 +1,22 @@
 package ea.itrade.duk.sdkClient.component.panel;
 
 import com.dukascopy.api.*;
+import com.dukascopy.api.feed.IFeedDescriptor;
+import com.dukascopy.api.feed.util.TicksFeedDescriptor;
 import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
 import com.dukascopy.api.system.tester.*;
+import com.google.common.collect.Lists;
 import ea.itrade.duk.base.Constants;
 import ea.itrade.duk.base.JForexUser;
 import ea.itrade.duk.ea.MacdDeviate;
 import ea.itrade.duk.sdkClient.component.base.ChartControlComm;
 import ea.itrade.duk.sdkClient.component.base.ControlPanelUtil;
+import ea.itrade.duk.sdkClient.component.base.JPeriodComboBox;
 import ea.itrade.duk.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.swing.*;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,31 +28,13 @@ import java.util.concurrent.Future;
  * This small program demonstrates how to initialize Dukascopy tester and start a strategy in GUI mode
  */
 @Slf4j
-public class ChartControl extends MainJFrame implements ITesterUserInterface, ITesterExecution {
+public class ChartControl extends MainJFrame {
 
     private IStrategy strategy;
 
     public ChartControl(IStrategy strategy){
         super(strategy);
         this.strategy = strategy;
-    }
-
-    @Override
-    public void setChartPanels(Map<IChart, ITesterGui> chartPanels) {
-        ChartControlComm.chartPanels = chartPanels;
-        ChartControlComm.jPeriodComboBox.setChartPanels(chartPanels);
-        if(chartPanels != null && chartPanels.size() > 0){
-            IChart chart = chartPanels.keySet().iterator().next();
-            Instrument instrument = chart.getInstrument();
-            setTitle(instrument.toString() + " " + chart.getSelectedOfferSide() + " " + chart.getSelectedPeriod());
-            JPanel chartPanel = chartPanels.get(chart).getChartPanel();
-            addChartPanel(chartPanel);
-        }
-    }
-
-    @Override
-    public void setExecutionControl(ITesterExecutionControl executionControl) {
-        ChartControlComm.executionControl = executionControl;
     }
 
     @Override
@@ -106,6 +91,11 @@ public class ChartControl extends MainJFrame implements ITesterUserInterface, IT
             log.error("Failed to connect Dukascopy servers");
             System.exit(1);
         }
+        IFeedDescriptor feedDescriptor = new TicksFeedDescriptor(Constants.instrument);
+        feedDescriptor.setOfferSide(Constants.offerSide);// need to set due to platform requirements
+        feedDescriptor.setFilter(Constants.filer);
+        feedDescriptor.setPeriod(Constants.dataIntervalPeriod);
+        client.setCharts(Lists.newArrayList(feedDescriptor));
         // custom historical data
         client.setDefaultFilter(Filter.WEEKENDS);
         client.setDataInterval(ITesterClient.DataLoadingMethod.ALL_TICKS, DateUtil.str2Date(Constants.dateFrom, DateUtil.TIME_FORMAT_DETAIL).getTime(), DateUtil.str2Date(Constants.dateEnd, DateUtil.TIME_FORMAT_DETAIL).getTime());
@@ -113,7 +103,7 @@ public class ChartControl extends MainJFrame implements ITesterUserInterface, IT
 
 
         //set instruments that will be used in testing
-        final Set<Instrument> instruments = new HashSet<Instrument>();
+        final Set<Instrument> instruments = new HashSet<>();
         instruments.add(Instrument.EURUSD);
 
         log.info("Subscribing instruments...");
@@ -128,7 +118,7 @@ public class ChartControl extends MainJFrame implements ITesterUserInterface, IT
         //start the strategy
         log.info("Starting strategy");
 
-        // Implementation of IndicatorParameterBean 
+        // Implementation of IndicatorParameterBean
         final class IndicatorParameterBean implements ITesterIndicatorsParameters {
             @Override
             public boolean isEquityIndicatorEnabled() {
@@ -143,18 +133,6 @@ public class ChartControl extends MainJFrame implements ITesterUserInterface, IT
                 return true;
             }
         }
-        // Implementation of TesterVisualModeParametersBean
-        final class TesterVisualModeParametersBean implements ITesterVisualModeParameters {
-            @Override
-            public Map<Instrument, ITesterIndicatorsParameters> getTesterIndicatorsParameters() {
-                Map<Instrument, ITesterIndicatorsParameters> indicatorParameters = new HashMap<>();
-                IndicatorParameterBean indicatorParameterBean = new IndicatorParameterBean();
-                indicatorParameters.put(Instrument.EURUSD, indicatorParameterBean);
-                return indicatorParameters;
-            }
-        }
-        // Create TesterVisualModeParametersBean
-        TesterVisualModeParametersBean visualModeParametersBean = new TesterVisualModeParametersBean();
 
         // Start strategy
         client.startStrategy(
@@ -162,23 +140,44 @@ public class ChartControl extends MainJFrame implements ITesterUserInterface, IT
                 new LoadingProgressListener() {
                     @Override
                     public void dataLoaded(long startTime, long endTime, long currentTime, String information) {
+                        JPeriodComboBox.flag = true;
                         log.info(information);
                     }
-
                     @Override
                     public void loadingFinished(boolean allDataLoaded, long startTime, long endTime, long currentTime) {
                     }
-
                     @Override
                     public boolean stopJob() {
                         return false;
                     }
                 },
-                visualModeParametersBean,
-                this,
-                this
+                new ITesterVisualModeParameters (){
+                    @Override
+                    public Map<Instrument, ITesterIndicatorsParameters> getTesterIndicatorsParameters() {
+                        return new HashMap<Instrument, ITesterIndicatorsParameters>(){{
+                            put(Constants.instrument, new IndicatorParameterBean());
+                        }};
+                    }
+                },
+                new ITesterExecution(){
+                    @Override
+                    public void setExecutionControl(ITesterExecutionControl executionControl) {
+                        ChartControlComm.executionControl = executionControl;
+                    }
+                },
+                new ITesterUserInterface(){
+                    @Override
+                    public void setChartPanels(Map<IChart, ITesterGui> chartPanels) {
+                        ChartControlComm.chartPanels = chartPanels;
+                        ChartControlComm.jPeriodComboBox.setChartPanels(chartPanels);
+                        if(chartPanels != null && chartPanels.size() > 0){
+                            IChart chart = chartPanels.keySet().iterator().next();
+                            setTitle(chart.getInstrument().toString() + " " + chart.getSelectedOfferSide() + " " + chart.getSelectedPeriod());
+                            addChartPanel(chartPanels.get(chart).getChartPanel());
+                        }
+                    }
+                }
         );
-        //now it's running
     }
 
     public static void main(String[] args) throws Exception {
@@ -188,5 +187,4 @@ public class ChartControl extends MainJFrame implements ITesterUserInterface, IT
         chartControl.showChartFrame();
 
     }
-
 }
