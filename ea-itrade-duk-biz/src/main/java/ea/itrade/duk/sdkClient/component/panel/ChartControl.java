@@ -9,11 +9,11 @@ import com.dukascopy.api.system.tester.*;
 import com.google.common.collect.Lists;
 import ea.itrade.duk.base.Constants;
 import ea.itrade.duk.base.JForexUser;
-import ea.itrade.duk.ea.MacdDeviate;
 import ea.itrade.duk.sdkClient.component.base.ChartControlComm;
 import ea.itrade.duk.sdkClient.component.base.JPeriodComboBox;
 import ea.itrade.duk.sdkClient.component.main.ISystemListenerImpl;
 import ea.itrade.duk.sdkClient.component.main.IndicatorParameterBean;
+import ea.itrade.duk.singlejartest.R34ver10lot6;
 import ea.itrade.duk.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -126,7 +126,8 @@ public class ChartControl extends MainJFrame {
 
     public static void main(String[] args) throws Exception {
         //IStrategy strategy = new MacdAndArw();
-        IStrategy strategy = new MacdDeviate();
+        //IStrategy strategy = new MacdDeviate();
+        IStrategy strategy = new R34ver10lot6();
         ChartControl chartControl = new ChartControl(strategy);
         chartControl.showChartFrame();
     }
