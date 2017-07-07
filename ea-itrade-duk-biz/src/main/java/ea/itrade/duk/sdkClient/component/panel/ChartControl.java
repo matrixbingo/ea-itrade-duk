@@ -3,7 +3,6 @@ package ea.itrade.duk.sdkClient.component.panel;
 import com.dukascopy.api.*;
 import com.dukascopy.api.feed.IFeedDescriptor;
 import com.dukascopy.api.feed.util.TicksFeedDescriptor;
-import com.dukascopy.api.system.ISystemListener;
 import com.dukascopy.api.system.ITesterClient;
 import com.dukascopy.api.system.TesterFactory;
 import com.dukascopy.api.system.tester.*;
@@ -12,12 +11,12 @@ import ea.itrade.duk.base.Constants;
 import ea.itrade.duk.base.JForexUser;
 import ea.itrade.duk.ea.MacdDeviate;
 import ea.itrade.duk.sdkClient.component.base.ChartControlComm;
-import ea.itrade.duk.sdkClient.component.base.ControlPanelUtil;
 import ea.itrade.duk.sdkClient.component.base.JPeriodComboBox;
+import ea.itrade.duk.sdkClient.component.main.ISystemListenerImpl;
+import ea.itrade.duk.sdkClient.component.main.IndicatorParameterBean;
 import ea.itrade.duk.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -39,46 +38,8 @@ public class ChartControl extends MainJFrame {
 
     @Override
     public void startStrategy() throws Exception {
-        //get the instance of the IClient interface
         final ITesterClient client = TesterFactory.getDefaultInstance();
-        //set the listener that will receive system events
-        client.setSystemListener(new ISystemListener() {
-            @Override
-            public void onStart(long processId) {
-                log.info("Strategy started: " + processId);
-                ControlPanelUtil.updateButtons();
-            }
-
-            @Override
-            public void onStop(long processId) {
-                log.info("Strategy stopped: " + processId);
-                resetButtons();
-
-                File reportFile = new File("C:\\report.html");
-                try {
-                    client.createReport(processId, reportFile);
-                } catch (Exception e) {
-                    log.error(e.getMessage(), e);
-                }
-                if (client.getStartedStrategies().size() == 0) {
-                    //Do nothing
-                }
-            }
-
-            @Override
-            public void onConnect() {
-                log.info("Connected");
-            }
-
-            @Override
-            public void onDisconnect() {
-                //tester doesn't disconnect
-            }
-        });
-
-        log.info("Connecting...");
-        //connect to the server using jnlp, user name and password
-        //connection is needed for data downloading
+        client.setSystemListener(new ISystemListenerImpl(client));
         client.connect(JForexUser.JNLP_URL, JForexUser.DEMO_USERNAME, JForexUser.DEMO_PASSWORD);
 
         //wait for it to connect
@@ -101,7 +62,6 @@ public class ChartControl extends MainJFrame {
         client.setDataInterval(ITesterClient.DataLoadingMethod.ALL_TICKS, DateUtil.str2Date(Constants.dateFrom, DateUtil.TIME_FORMAT_DETAIL).getTime(), DateUtil.str2Date(Constants.dateEnd, DateUtil.TIME_FORMAT_DETAIL).getTime());
         //client.setDataInterval(Constants.dataIntervalPeriod, OfferSide.ASK, ITesterClient.InterpolationMethod.CLOSE_TICK, DateUtil.str2Date(Constants.dateFrom, DateUtil.TIME_FORMAT_DETAIL).getTime(), DateUtil.str2Date(Constants.dateEnd, DateUtil.TIME_FORMAT_DETAIL).getTime());
 
-
         //set instruments that will be used in testing
         final Set<Instrument> instruments = new HashSet<>();
         instruments.add(Instrument.EURUSD);
@@ -117,22 +77,6 @@ public class ChartControl extends MainJFrame {
         future.get();
         //start the strategy
         log.info("Starting strategy");
-
-        // Implementation of IndicatorParameterBean
-        final class IndicatorParameterBean implements ITesterIndicatorsParameters {
-            @Override
-            public boolean isEquityIndicatorEnabled() {
-                return true;
-            }
-            @Override
-            public boolean isProfitLossIndicatorEnabled() {
-                return true;
-            }
-            @Override
-            public boolean isBalanceIndicatorEnabled() {
-                return true;
-            }
-        }
 
         // Start strategy
         client.startStrategy(
@@ -185,6 +129,5 @@ public class ChartControl extends MainJFrame {
         IStrategy strategy = new MacdDeviate();
         ChartControl chartControl = new ChartControl(strategy);
         chartControl.showChartFrame();
-
     }
 }
