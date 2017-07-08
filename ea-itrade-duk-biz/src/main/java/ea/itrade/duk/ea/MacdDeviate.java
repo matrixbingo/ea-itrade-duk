@@ -9,6 +9,7 @@ import com.dukascopy.api.feed.IFeedDescriptor;
 import com.dukascopy.api.feed.IFeedListener;
 import com.dukascopy.api.feed.util.TimePeriodAggregationFeedDescriptor;
 import com.dukascopy.api.indicators.IIndicator;
+import com.dukascopy.api.indicators.OutputParameterInfo.DrawingStyle;
 import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Doubles;
@@ -89,7 +90,7 @@ public class MacdDeviate implements IStrategy {
             this.console.getErr().println("No chart opened, can't plot indicators.");
             this.context.stop();
         } else if (this.chart != null) {
-            IChartPanel chartPanel = chart.add(indicators.getIndicator("MACD"), new Object[]{Constants.fastMACDPeriod, Constants.slowMACDPeriod, Constants.signalMACDPeriod});
+            IChartPanel chartPanel = chart.add(indicators.getIndicator("MACD"), new Object[]{Constants.fastMACDPeriod, Constants.slowMACDPeriod, Constants.signalMACDPeriod}, new Color[]{Color.CYAN, Color.ORANGE, Color.MAGENTA}, new DrawingStyle[]{DrawingStyle.LINE, DrawingStyle.LINE, DrawingStyle.HISTOGRAM }, new int[]{1,1});
             strategyDto.setChartPanel(chartPanel);
         }
 

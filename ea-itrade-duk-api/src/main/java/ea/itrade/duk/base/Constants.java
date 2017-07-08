@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by liang.wang.sh on 2017/7/2.
  */
 public class Constants {
-    final public static String dateFrom = "2011-07-27 00:11:00";
+    final public static String dateFrom = "2011-07-16 00:11:00";
     final public static String dateEnd  = "2011-08-27 00:00:00";
     final public static Instrument instrument = Instrument.EURUSD;
     final public static OfferSide offerSide = OfferSide.ASK;
@@ -29,10 +29,10 @@ public class Constants {
     final public static Filter filer = Filter.WEEKENDS;
 
     final public static IFeedDescriptor feedDescriptor = new TimePeriodAggregationFeedDescriptor(
-            Instrument.EURUSD,
+            instrument,
             dataIntervalPeriod,
             offerSide,
-            Filter.NO_FILTER
+            filer
     );
 
     final public static Map<String, IChartDependentChartObject> arrwMap = new ConcurrentHashMap<>();
