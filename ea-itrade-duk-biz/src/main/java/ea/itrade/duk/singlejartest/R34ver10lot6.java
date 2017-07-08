@@ -188,13 +188,13 @@ public class R34ver10lot6 implements IStrategy {
 	private void updateVariables(Instrument instrument) {
 		try {
 			AllPositions = engine.getOrders();
-			List<IOrder> listMarket = new ArrayList<IOrder>();
+			List<IOrder> listMarket = new ArrayList<>();
 			for (IOrder order: AllPositions) {
 				if (order.getState().equals(IOrder.State.FILLED)){
 					listMarket.add(order);
 				}
 			}
-			List<IOrder> listPending = new ArrayList<IOrder>();
+			List<IOrder> listPending = new ArrayList<>();
 			for (IOrder order: AllPositions) {
 				if (order.getState().equals(IOrder.State.OPENED)){
 					listPending.add(order);
